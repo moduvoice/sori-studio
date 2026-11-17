@@ -1,0 +1,71 @@
+# Kitten TTS 2 mini 레시피(판 1, 2026-11-17). 2026-11-13 공개, 82M ONNX int8 - CPU 만으로 돌아요.
+id: kitten-tts-2-mini
+name: Kitten TTS 2 mini
+recipe_version: 1
+role: tts
+summary: 아주 작고 가벼운 CPU 엔진(2026-11 새 모델). 한국어 목소리 3명이 있어요.
+maker: KittenML
+homepage: https://github.com/KittenML/KittenTTS
+
+devices: {cpu: native, nvidia: "no", mac: unverified}
+measured:
+  syll_rate: 6.7        # 초당 한글 음절(Windows 스팟 소리 실측 2026-11-17) - 길이 검사 기준
+  evidence: measured     # 스팟 설치·소리 실측 + 사람 평가 1명(벤치 표 없음)
+  ram_gb: 1.5
+  load_s: 10
+  rtf_cpu: 0.32          # Windows 스팟 자가 시험 실측(8 vCPU)
+  sample_rate: 24000
+human_eval:
+  line: 매우 빠르게 말하지만 발음이 정확해요. 자연스러움은 기계적인 TTS 같아요. Supertonic-3 에서 발전한 느낌이에요.
+  short: 빠르고 정확·기계적
+  by: 사람 평가 1명(2026-11-17, 기본 속도 1.0 으로 들음)
+good_for: [알림·안내, 빠른 초안, GPU 없는 PC]
+speed: {default: 0.85, min: 0.6, max: 1.3}   # 기본 1.0 은 "매우 빠름"(사용자 평) - 0.85 로 낮춤, 스팟에서 다시 들어 확인할 것
+
+license:
+  id: apache-2.0
+  name: Apache-2.0
+  url: https://huggingface.co/KittenML/kitten-tts-2-mini
+  commercial: "yes"
+  text_file: LICENSE-weights.txt
+  summary:
+    - 개인·회사 모두 상업적으로 쓸 수 있어요.
+    - 모델을 고쳐 다시 배포할 때는 라이선스 원문과 바꾼 점을 함께 줘야 해요.
+    - 요약은 참고용이고 원문이 우선해요.
+maintenance: {status: active}
+
+python: "3.12"
+packages:
+  win-x64: requirements-win-x64.txt
+  linux-x64: requirements-linux-x64.txt
+pip_index: {cpu: "https://download.pytorch.org/whl/cpu"}   # 리눅스 PyPI torch 는 CUDA 판(6.5GB) - CPU 판으로
+env_bytes: {cpu: 1300000000}   # Windows 스팟 실측
+
+weights:
+  - dir: kitten
+    sources: [{repo: KittenML/kitten-tts-2-mini, revision: c01797caec3967b400da457656e011eb81f530a4}]
+    files:
+      - {path: config.json, size: 16329, sha256: e6a63545213fbb677da62e1bc9946059033252bf61f57682b47cb6d8a54d0cbf}
+      - {path: g2p/cmu_misaki_us.json, size: 3418388, sha256: ae564e1a76df3501058a5ec99d135d016759c9475042fb6c3811374daee1ef04}
+      - {path: g2p/g2p_bart_en_us/README.md, size: 31, sha256: 4bcf87ecfbbb8e07a01b21415a970c8b53a5283bf6872b657040d3f45c9241f7}
+      - {path: g2p/g2p_bart_en_us/config.json, size: 1257, sha256: 8deb3537fb29c63cd9f20d75515ae06e4c92f1b6db0703a2d45bca95b33a53a4}
+      - {path: g2p/g2p_bart_en_us/generation_config.json, size: 191, sha256: 79a11240b01c6d34cab0b122b63a2b2dd5938c4d37d1530e14144d27e8ba6272}
+      - {path: g2p/g2p_bart_en_us/model.safetensors, size: 3011692, sha256: dc4a02e62d4fcb4bb4097ecf00db89b8e1a12a549a52ab6adfbba220b80a55c5}
+      - {path: kitten_tts_2_mini.onnx, size: 82711386, sha256: fa821c1cdd8f7fbfdbd5d1cae0a767673871d62696b85af7db059a9bd26b42d2}
+      - {path: vocab.json, size: 1324, sha256: b007200ac2a7973ac25c509f8346815076b9d9f33758cb0bfe4de99e2f58f851}
+      - {path: voices_en.npz, size: 5747328, sha256: 5c18573d075f53f6f218c2056dfc84ad10e976e81e23d55e5a7a6adc6e9135a4}
+      - {path: voices_ko.npz, size: 1567476, sha256: d3d5295000153ad90f7a321769cd4647b8db42612feaf6e3d6e765f1c35b9daf}
+
+adapter: adapter.py
+threads: 4
+max_chars: 300
+voices:
+  - {id: Seoyeon, name: 서연, gender: f}
+  - {id: Minjun, name: 민준, gender: m}
+  - {id: Jihoon, name: 지훈, gender: m}
+default_voice: Seoyeon
+
+selftest:
+  - 안녕하세요, 소리 스튜디오 자가 시험이에요.
+  - 오늘은 십일월 십칠일이고, 기온은 영상 오도예요.
+  - 이 문장이 또렷하게 들리면 설치가 끝난 거예요.

@@ -1,0 +1,87 @@
+# Confucius4-TTS 레시피(판 1, 2026-11-17) - 소스 코드 + 판 고정 의존성(torch 2.7.0 cu128), 리눅스 전용(Windows 는 WSL2).
+# 모델 저장소 넷(본체·w2v-bert-2.0·BigVGAN·CAMPPlus)을 공식 출처에서 받아 로컬로 읽어요(어댑터가 HF 내려받기를 로컬 파일로 돌림).
+id: confucius4
+name: Confucius4-TTS
+recipe_version: 1
+role: tts
+summary: 목소리를 따라 하는 힘이 가장 강한 엔진이에요. 공용 목소리 12명으로 말해요. 숫자는 한글로 바꿔 넣는 게 좋아요.
+maker: NetEase Youdao
+homepage: https://github.com/netease-youdao/Confucius4-TTS
+
+devices: {cpu: "no", nvidia: ok, mac: "no"}
+measured:
+  syll_rate: 6.8
+  at: "2026-11-16"
+  evidence: verified
+  cer_ko: 0.0245
+  hallu: "5/459"
+  sim_ref: 0.79
+  gpu_mem_gb: 10          # 추정(설치·소리는 32GB GPU 에서만 확인)
+  gpu_tested_gb: 32       # 이보다 작은 GPU 는 '미검증'으로 보여요
+  load_s: 120
+  rtf_gpu: 1.2
+  sample_rate: 22050
+human_eval:
+  line: 복제 능력이 매우 강해요. 숫자를 영어로 읽는 문제가 있어요.
+  short: 복제 최강·숫자는 한글로
+  by: 사람 평가 1명(2026-11-16)
+good_for: [또렷한 나레이션]
+
+license:
+  id: apache-2.0
+  name: Apache-2.0
+  url: https://huggingface.co/netease-youdao/Confucius4-TTS
+  commercial: "yes"
+  text_file: LICENSE-weights.txt
+  summary:
+    - 개인·회사 모두 상업적으로 쓸 수 있어요(본체). 함께 받는 w2v-bert-2.0·BigVGAN 은 MIT, CAMPPlus 는 Apache-2.0 이에요.
+    - 복제는 본인 목소리나 허락받은 목소리만 써요.
+    - 요약은 참고용이고 원문이 우선해요.
+maintenance: {status: active}
+
+python: "3.10"
+runtime: {win-x64: wsl}
+packages: {linux-x64: requirements-linux-x64.txt}
+pip_index: {cuda: "https://download.pytorch.org/whl/cu128"}
+code:
+  - {url: "https://codeload.github.com/netease-youdao/Confucius4-TTS/zip/0267ef80fa29366dfa5a18edd93f0771e145f8ed", sha256: fb54d4196c25e53da483384ce1a33b76d2c7a34abf23d021e4c81c8bc7aac0c3, size: 1678646, dir: confucius4}
+env_bytes: {cuda: 7730000000}   # 리눅스 스팟 실측
+requires: {nvidia_driver: 570}  # torch cu128
+
+weights:
+  - dir: confucius4
+    sources: [{repo: netease-youdao/Confucius4-TTS, revision: 36b10dd6ff5026e333123bda5f6366de27c8b7a1}]
+    files:
+      - {path: config.json, size: 57, sha256: cf7a9f32fa77d743bc9570920f359aa197b58cf14d6ca85732f02cb386e0f267}
+      - {path: s2a_model.pt, size: 417121682, sha256: 0f18c761d8176ee3c4ff98f633d359446f6d38740b8651157b1db2124ec3817c}
+      - {path: special_tokens_map.json, size: 438, sha256: 719833ff26ac897a3ec8ed946028a135de2a351470af59b4008744ab1f0ee9b7}
+      - {path: t2s_model.safetensors, size: 2643608800, sha256: cccee8522e8260093acc1c94d8decee2c24e2b2b3f3c1f883b8f888d5e1a40ee}
+      - {path: tokenizer.json, size: 3505608, sha256: 835cf54bb933752267652500a9243a9002107bbb4501b99f8d2f46ccfdad2567}
+      - {path: tokenizer.model, size: 493443, sha256: dadfd56d766715c61d2ef780a525ab43b8e6da4de6865bda3d95fdef5e134055}
+      - {path: tokenizer_config.json, size: 1138, sha256: 2611626f1da60f50bf0236ba524e4d00c8e23aa9fa521a918c293a74619dd8ab}
+      - {path: wav2vec2bert_stats.pt, size: 9343, sha256: c9c176c2b8850ab2e3ba828bbfa969deaf4566ce55db5f2687b8430b87526ad2}
+  - dir: w2v-bert-2.0
+    sources: [{repo: facebook/w2v-bert-2.0, revision: da985ba0987f70aaeb84a80f2851cfac8c697a7b}]
+    files:
+      - {path: config.json, size: 1874, sha256: f5572bd5998b68182e9c328a43127ed21fed687f6910497136b91a4e3b0e3675}
+      - {path: model.safetensors, size: 2322063736, sha256: eb890c9660ed6e3414b6812e27257b8ce5454365d5490d3ad581ea60b93be043}
+      - {path: preprocessor_config.json, size: 275, sha256: 8e6281aad64f97e40534135a59dcc5d33571efae376f2a25adf5551951897ab4}
+  - dir: bigvgan
+    sources: [{repo: nvidia/bigvgan_v2_22khz_80band_256x, revision: 633ff708ed5b74903e86ff1298cf4a98e921c513}]
+    files:
+      - {path: bigvgan_generator.pt, size: 449228171, sha256: e95ba25972d3de0628d99cd156e9315a9c018899bf739988959ebe3544080ced}
+      - {path: config.json, size: 1405, sha256: 88a1f47acf747db0b21e97a389d838566147f7a5464583ff5c8d819d870f03ee}
+  - dir: campplus
+    sources: [{repo: funasr/campplus, revision: e4b6ede7ce16997aff4ae69fbca1f0175e2afede}]
+    files:
+      - {path: campplus_cn_common.bin, size: 28036335, sha256: 3388cf5fd3493c9ac9c69851d8e7a8badcfb4f3dc631020c4961371646d5ada8}
+
+adapter: adapter.py
+max_chars: 200
+voices_from: shared
+default_voice: hyeonseok
+
+selftest:
+  - 안녕하세요, 소리 스튜디오 자가 시험이에요.
+  - 오늘은 십일월 십칠일이고, 기온은 영상 오도예요.
+  - 이 문장이 또렷하게 들리면 설치가 끝난 거예요.

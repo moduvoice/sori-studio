@@ -1,0 +1,101 @@
+# 공용 기본 목소리 - 복제만 되는 엔진(VoxCPM2·Confucius4·CosyVoice3·ZONOS3·dots.tts)이 참조 클립으로 써요.
+# 모두 Qwen3-TTS VoiceDesign(Apache-2.0)이 한국어 묘사로 만든 가상 인물이에요(실존 인물 아님). 자세한 것은 README.md.
+# gender 는 묘사가 아니라 실제 소리의 평균 음높이로 정했어요(165Hz 미만 = m). 한국어 묘사로는 남성 지정이 잘 안 돼서
+# "남성" 으로 묘사한 6명 중 5명이 높은 음역으로 만들어졌어요(2026-11-17 측정).
+voices:
+- id: bora
+  name: 보라
+  name_en: Bora
+  gender: f
+  desc: '만들 때 쓴 설명: 삼십대 여성 뉴스 앵커. 또렷하고 침착한 표준어 발음. (실제 소리는 평균 282Hz - 높은 음역)'
+  wav: bora.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 282
+- id: byungho
+  name: 병호
+  name_en: Byungho
+  gender: f
+  desc: '만들 때 쓴 설명: 오십대 남성 아나운서. 격식 있고 안정된 낮은 목소리. (실제 소리는 평균 205Hz - 높은 음역)'
+  wav: byungho.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 205
+- id: sujin
+  name: 수진
+  name_en: Sujin
+  gender: f
+  desc: '만들 때 쓴 설명: 삼십대 여성 다큐멘터리 내레이터. 따뜻하고 차분한 목소리. (실제 소리는 평균 226Hz - 높은 음역)'
+  wav: sujin.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 226
+- id: jungwoong
+  name: 정웅
+  name_en: Jungwoong
+  gender: f
+  desc: '만들 때 쓴 설명: 사십대 남성 내레이터. 굵고 낮으며 진지한 목소리. (실제 소리는 평균 273Hz - 높은 음역)'
+  wav: jungwoong.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 273
+- id: dajung
+  name: 다정
+  name_en: Dajung
+  gender: f
+  desc: '만들 때 쓴 설명: 이십대 후반 여성 동화 구연가. 다정하고 부드러운 목소리. (실제 소리는 평균 231Hz - 높은 음역)'
+  wav: dajung.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 231
+- id: woojin
+  name: 우진
+  name_en: Woojin
+  gender: m
+  desc: '만들 때 쓴 설명: 삼십대 남성 이야기꾼. 친근하고 부드러운 목소리. (실제 소리는 평균 139Hz - 낮은 음역)'
+  wav: woojin.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 139
+- id: jeongyeon
+  name: 정연
+  name_en: Jeongyeon
+  gender: f
+  desc: '만들 때 쓴 설명: 사십대 여성. 말이 빠르고 날카로운 성격이 드러나는 목소리. (실제 소리는 평균 238Hz - 높은 음역)'
+  wav: jeongyeon.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 238
+- id: jinsu
+  name: 진수
+  name_en: Jinsu
+  gender: f
+  desc: '만들 때 쓴 설명: 사십대 남성. 거칠지만 정이 느껴지는 목소리. (실제 소리는 평균 226Hz - 높은 음역)'
+  wav: jinsu.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 226
+- id: jieun
+  name: 지은
+  name_en: Jieun
+  gender: f
+  desc: '만들 때 쓴 설명: 사십대 주부. 편안한 일상 말투의 여성 목소리. (실제 소리는 평균 245Hz - 높은 음역)'
+  wav: jieun.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 245
+- id: hyeonseok
+  name: 현석
+  name_en: Hyeonseok
+  gender: f
+  desc: '만들 때 쓴 설명: 삼십대 남성 회사원. 예의 바르고 단정한 목소리. (실제 소리는 평균 296Hz - 높은 음역)'
+  wav: hyeonseok.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 296
+- id: eunyoung
+  name: 은영
+  name_en: Eunyoung
+  gender: f
+  desc: '만들 때 쓴 설명: 이십대 여성 방송 리포터. 밝고 생기 있는 목소리. (실제 소리는 평균 267Hz - 높은 음역)'
+  wav: eunyoung.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 267
+- id: doyoon
+  name: 도윤
+  name_en: Doyoon
+  gender: f
+  desc: '만들 때 쓴 설명: 삼십대 남성 성우. 극적이고 또렷한 목소리. (실제 소리는 평균 240Hz - 높은 음역)'
+  wav: doyoon.wav
+  text: 안녕하세요. 오늘은 제 목소리로 짧은 이야기를 하나 들려드릴게요. 천천히, 편안하게 들어 주세요.
+  pitch_hz: 240

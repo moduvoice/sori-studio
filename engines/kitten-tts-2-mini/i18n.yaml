@@ -1,0 +1,21 @@
+# 화면 언어별 레시피 문구(카탈로그가 recipe.yaml 의 i18n 으로 합쳐요). 없는 칸은 recipe.yaml 의 한국어를 써요.
+en:
+  selftest:
+  - Hello, this is the Sori Studio self-test.
+  - Today is November 17th, and it's five degrees above zero.
+  - If this sentence sounds clear, the install is done.
+  summary: A tiny, light CPU engine (new in November 2026). Has 3 Korean voices.
+  good_for:
+  - Alerts & announcements
+  - Quick drafts
+  - PCs without a GPU
+  human_eval_line: Speaks very fast but pronounces accurately. Sounds somewhat mechanical. Feels like an evolution of Supertonic-3.
+  human_eval_by: Rated by 1 person (2026-11-17, at default speed 1.0)
+  license_summary:
+  - Free for personal and commercial use.
+  - If you modify and redistribute the model, include the license text and a note of your changes.
+  - This summary is for reference; the original text prevails.
+  voices:
+    Seoyeon: Seoyeon
+    Minjun: Minjun
+    Jihoon: Jihoon

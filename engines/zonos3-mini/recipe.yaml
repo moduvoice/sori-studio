@@ -1,0 +1,81 @@
+# ZONOS3-Mini 레시피(판 1, 2026-11-17) - SGLang-Omni 서버형, 리눅스 전용(Windows 는 WSL2). 만든 곳: etc/make_sglomni_recipes.py
+id: zonos3-mini
+name: ZONOS3-Mini
+recipe_version: 1
+role: tts
+summary: 아주 빠른 엔진. 애니메이션·뉴스 성우 톤에 강해요. 공용 목소리 12명으로 말해요.
+maker: Zyphra
+homepage: https://huggingface.co/Zyphra/ZONOS3-Mini
+
+devices: {cpu: "no", nvidia: ok, mac: "no"}
+measured:
+  syll_rate: 7.5
+  cer_ko: 0.0393
+  hallu: "14/435"
+  gpu_mem_gb: 16          # 추정(설치·소리는 32GB GPU 에서만 확인)
+  gpu_tested_gb: 32       # 이보다 작은 GPU 는 '미검증'으로 보여요
+  load_s: 300
+  rtf_gpu: 0.3
+  sample_rate: 44100
+  at: "2026-11-16"
+  evidence: verified
+human_eval:
+  line: 애니메이션과 뉴스 성우 톤에 강해요. 일상 한국어는 부자연스러운 편이에요.
+  short: 애니·뉴스 성우 톤
+  by: 사람 평가 1명(2026-11-16)
+good_for: [애니메이션·뉴스 톤, 빠른 생성]
+
+license:
+  id: apache-2.0
+  name: Apache-2.0
+  url: https://huggingface.co/Zyphra/ZONOS3-Mini
+  commercial: "yes"
+  text_file: LICENSE-weights.txt
+  summary:
+    - 개인·회사 모두 상업적으로 쓸 수 있어요.
+    - 복제는 본인 목소리나 허락받은 목소리만 써요.
+    - 요약은 참고용이고 원문이 우선해요.
+maintenance: {status: active}
+
+python: "3.12"
+runtime: {win-x64: wsl}           # 리눅스 전용(SGLang) - Windows 에서는 WSL2 안에서
+packages: {linux-x64: ../_runtimes/sglang-omni/requirements-linux-x64.txt}
+packages_nodeps: {linux-x64: ../_runtimes/sglang-omni/requirements-nodeps-linux-x64.txt}
+code:
+  - {url: "https://codeload.github.com/sgl-project/sglang-omni/zip/eeaf0390f5bcd4cd335217622db253df03c7fc7a", sha256: 6b56a9193c77619b84cde0a27bdc83c79d7e62b03dfe23ea091a053ede3c29f2, size: 40651276, dir: sglang-omni}
+local_packages: [code/sglang-omni]
+env_bytes: {cuda: 12600000000}    # 리눅스 스팟 실측(torch cu13 + sglang + flashinfer)
+requires: {nvidia_driver: 580}
+system_deps: {linux-x64: [cuda-toolkit-13-0]}   # SGLang 커널 즉석 컴파일용 정식 CUDA 툴킷(WSL2 는 허브가 NVIDIA 공식 저장소에서 깔아요)
+
+weights:
+  - dir: zonos3
+    sources: [{repo: Zyphra/ZONOS3-Mini, revision: d2d142a86b1e6aeb4252679673c86ecd86177bf8}]
+    files:
+      - {path: autoencoder/generator.pt, size: 7960647220, sha256: 75a587a3eda9ca3d345f0c305756a7ff8619b01685c261b08ae243c69c2caf9a}
+      - {path: autoencoder/heads/full_mr/config_full_unfreezeall_mr.json, size: 11828, sha256: 0de8780f3acd2504f24815c03d1c8283e646d9d49b6add89b842232650188e83}
+      - {path: autoencoder/heads/full_mr/step_0050000.pt, size: 4012134189, sha256: 9d2e2340c74f763340535f84e5dda59b5eabea668360400f8fac6b641598a1e9}
+      - {path: autoencoder/heads/keep2_plain/config_full_unfreezeall_mr_drop30_4x10.json, size: 10304, sha256: cb3c63873047d54e2630b215124c26763af9b1dbd022e07dbc4e5d1f56017541}
+      - {path: autoencoder/heads/keep2_plain/step_0050000.pt, size: 518498361, sha256: 7432e335e717417961267f2242547ce389a796cdc296a8b8d5289658e3c28936}
+      - {path: autoencoder/teacher/config.json, size: 1863, sha256: d0af3f09a07e0456958b93e03f0ac91825fbe2f5ac0ca76e9ba18729027d4b21}
+      - {path: autoencoder/teacher/model.safetensors, size: 774162368, sha256: a15182741d6ee3cd780b8b830f49fa6b7fcce383655d451970841b24114767a5}
+      - {path: lm/zonos3_mini/model.pth, size: 1772391535, sha256: 3b4ac0a6e3002bd575ad9a0761ae7524806a908f553042171dead8f3a2146caa}
+      - {path: lm/zonos3_mini/params.json, size: 2500, sha256: 28dc488d7142831d739f427e048c699b7ed12852d88da0a9123a137f15aa5a5b}
+      - {path: lm/zonos3_mini/text_rows/pause_tokens_s5000.json, size: 2419, sha256: f36d39b35c35f7c367e947e0a4568d11bd14882e9b45515bdab2728c6abb44ac}
+      - {path: lm/zonos3_mini/text_rows/pause_tokens_s5000.pt, size: 589771, sha256: 35868b0ff855081f3340a1c96644cfe9bf21b42935d9ed991ddd59ea0375e621}
+      - {path: lm/zonos3_mini/tokenizer/superbpe8192.json, size: 559287, sha256: 90322f910600027dee7fe63d400d1d9dc1035c167d560aadf0871e3661d08bf3}
+      - {path: registries/codec_registry.json, size: 561, sha256: 9cc533e32d7fb6c2b157c09dc4dc40db58939d59572c1716243880eb2ca104c9}
+      - {path: registries/codec_registry_keep2_plain.json, size: 565, sha256: 5437b4159b2bdbc33d3c1a27a316df7ae361b06f5ce3c9822f585402bcb4351a}
+      - {path: registries/silence_frame_opus_dual_3n_600k_sched600k_r4096_step600000.json, size: 179, sha256: 5090cebb58a2ae6dbdb576f87398b1a9dd94e98f2a70c6a3069ab4a73fe392a3}
+      - {path: registries/speaker_encoder_registry.json, size: 655, sha256: fbc4d0b3ef6347aa3c44eec787ed08fbbb04e732558a7f52143d005ab049f862}
+      - {path: speaker_encoders/ownmect_s2/ckpt_0037.pth, size: 50277003, sha256: 3cef65631f3161cbd8eacc6ea40e59a237c79656d85c7232dcbe0c8d07cae88f}
+
+adapter: adapter.py
+max_chars: 200
+voices_from: shared
+default_voice: eunyoung
+
+selftest:
+  - 안녕하세요, 소리 스튜디오 자가 시험이에요.
+  - 오늘은 십일월 십칠일이고, 기온은 영상 오도예요.
+  - 이 문장이 또렷하게 들리면 설치가 끝난 거예요.

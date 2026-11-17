@@ -1,0 +1,68 @@
+# dots.tts (MeanFlow) 레시피(판 1, 2026-11-17) - SGLang-Omni 서버형, 리눅스 전용(Windows 는 WSL2). 만든 곳: etc/make_sglomni_recipes.py
+id: dots-tts
+name: dots.tts (MeanFlow)
+recipe_version: 1
+role: tts
+summary: 2026 새 모델. 48kHz 고음질이에요. 한국어는 공식 언어 목록에 없고 벤치 점수만 있어요. 공용 목소리 12명으로 말해요.
+maker: dots-studio
+homepage: https://huggingface.co/dots-studio/dots.tts-mf
+
+devices: {cpu: "no", nvidia: ok, mac: "no"}
+measured:
+  evidence: unverified   # 우리 벤치 전 - 스팟 설치 확인만(2026-11-17)
+  gpu_mem_gb: 10          # 추정(설치·소리는 32GB GPU 에서만 확인)
+  gpu_tested_gb: 32       # 이보다 작은 GPU 는 '미검증'으로 보여요
+  load_s: 300
+  sample_rate: 48000
+good_for: [고음질]
+
+license:
+  id: apache-2.0
+  name: Apache-2.0
+  url: https://huggingface.co/dots-studio/dots.tts-mf
+  commercial: "yes"
+  text_file: LICENSE-weights.txt
+  summary:
+    - 개인·회사 모두 상업적으로 쓸 수 있어요.
+    - 복제는 본인 목소리나 허락받은 목소리만 써요.
+    - 요약은 참고용이고 원문이 우선해요.
+maintenance: {status: active}
+
+python: "3.12"
+runtime: {win-x64: wsl}           # 리눅스 전용(SGLang) - Windows 에서는 WSL2 안에서
+packages: {linux-x64: ../_runtimes/sglang-omni/requirements-linux-x64.txt}
+packages_nodeps: {linux-x64: ../_runtimes/sglang-omni/requirements-nodeps-linux-x64.txt}
+code:
+  - {url: "https://codeload.github.com/sgl-project/sglang-omni/zip/eeaf0390f5bcd4cd335217622db253df03c7fc7a", sha256: 6b56a9193c77619b84cde0a27bdc83c79d7e62b03dfe23ea091a053ede3c29f2, size: 40651276, dir: sglang-omni}
+local_packages: [code/sglang-omni]
+env_bytes: {cuda: 12600000000}    # 리눅스 스팟 실측(torch cu13 + sglang + flashinfer)
+requires: {nvidia_driver: 580}
+system_deps: {linux-x64: [cuda-toolkit-13-0]}   # SGLang 커널 즉석 컴파일용 정식 CUDA 툴킷(WSL2 는 허브가 NVIDIA 공식 저장소에서 깔아요)
+
+weights:
+  - dir: dots-tts
+    sources: [{repo: dots-studio/dots.tts-mf, revision: c28105adc8228143392b4e346994ff613ee48a06}]
+    files:
+      - {path: added_tokens.json, size: 831, sha256: 1268ec3933b675b8ff4ddf688f2a6088795a122da8693645bf00a1232c4c8422}
+      - {path: chat_template.jinja, size: 2427, sha256: 44d5f08f3f72b837eaad09f13a54c1f9f4eb58d75240334548b7fd52a5437fa5}
+      - {path: config.json, size: 2091, sha256: 1d6f164cfec8676528776016de4457e0186eceb759a34e9192ee84098a028082}
+      - {path: latent_stats.pt, size: 3197, sha256: 313b13af56d659ecf869d5f854508fcf823c8f957aefc6bc05244991abd6ffe1}
+      - {path: llm_config.json, size: 2727, sha256: ce378446b2a6353547ecb44652701ec8ef42610cdcd33f728719033a9d7bb8a1}
+      - {path: merges.txt, size: 1671853, sha256: 8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5}
+      - {path: model.safetensors, size: 4398915254, sha256: a16d5798da197bf647fc01915236873e4672e975b0341360703ec49d002c4696}
+      - {path: speaker_encoder.safetensors, size: 29150484, sha256: 1cf3861c9dee79e4db34bd0b8a4155e68bed27a7c6274e168bb6ee4fed191c85}
+      - {path: special_tokens_map.json, size: 1398, sha256: 52aa5522bb1bce46f653935a856be7d0e006d1acbc881d608d57a8cb687339d7}
+      - {path: tokenizer.json, size: 11423263, sha256: c16521f66774c7a4774e5303b7c8ec5c99830c0be5aef6c6edde3ca2a5e05dd0}
+      - {path: tokenizer_config.json, size: 5886, sha256: 5fec72f1ad92d8493770ebe6fbd8bf62645f0587bfa2b6e3e12d58c766b92096}
+      - {path: vocab.json, size: 2776833, sha256: ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910}
+      - {path: vocoder.safetensors, size: 723585584, sha256: c0e45c08f480df67ac4c354b465355fcc7e2f6c8765263b6dfeddd1f4671c93d}
+
+adapter: adapter.py
+max_chars: 200
+voices_from: shared
+default_voice: dajung
+
+selftest:
+  - 안녕하세요, 소리 스튜디오 자가 시험이에요.
+  - 오늘은 십일월 십칠일이고, 기온은 영상 오도예요.
+  - 이 문장이 또렷하게 들리면 설치가 끝난 거예요.

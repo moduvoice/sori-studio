@@ -1,0 +1,8 @@
+descript-audio-codec==1.0.0 \
+    --hash=sha256:56a5a541128686821570756512d405534e9d7a978b34adf2510cfe981f0b00e0 \
+    --hash=sha256:7ecd1883040613d143494f27f199c11c7053a8a7f9fd2120568c5a98db926e61
+    # via -r nodeps.in
+descript-audiotools==0.7.2 \
+    --hash=sha256:2cdd363025c771b8acc53d5ef9ec77e34f92e182272c4be7fd0118a99b6a5e2a \
+    --hash=sha256:bb7a4e837f92395e43894d99a89406485325b88c6f158caf59e18876cf5b06ea
+    # via -r nodeps.in

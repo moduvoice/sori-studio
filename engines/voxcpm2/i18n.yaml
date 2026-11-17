@@ -1,0 +1,16 @@
+# 화면 언어별 레시피 문구(카탈로그가 recipe.yaml 의 i18n 으로 합쳐요). 없는 칸은 recipe.yaml 의 한국어를 써요.
+en:
+  selftest:
+  - Hello, this is the Sori Studio self-test.
+  - Today is November 17th, and it's five degrees above zero.
+  - If this sentence sounds clear, the install is done.
+  summary: High quality 48kHz audio. Strong on long text. Speaks with 12 shared voices.
+  good_for:
+  - Audiobooks & long text
+  - High quality narration
+  human_eval_line: Natural. Sounds a little like a live recording. Occasionally slips in words not in the script (foreign words) - the length check remakes those.
+  human_eval_by: Rated by 1 person (2026-11-16)
+  license_summary:
+  - Free for personal and commercial use.
+  - If you modify and redistribute the model, include the license text and a note of your changes.
+  - Cloning someone else's voice needs their permission (law and ethics, apart from the license).

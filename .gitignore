@@ -1,0 +1,7 @@
+tmp/
+__pycache__/
+.venv/
+node_modules/
+ui/dist/
+*.tsbuildinfo
+aws/.userdata.ps1

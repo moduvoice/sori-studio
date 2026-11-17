@@ -1,0 +1,13 @@
+# 화면 언어별 레시피 문구(카탈로그가 recipe.yaml 의 i18n 으로 합쳐요). 없는 칸은 recipe.yaml 의 한국어를 써요.
+en:
+  selftest:
+  - Hello, this is the Sori Studio self-test.
+  - Today is November 17th, and it's five degrees above zero.
+  - If this sentence sounds clear, the install is done.
+  summary: New in 2026. High quality 48kHz audio. Korean isn't in its official language list; we only have benchmark scores. Speaks with 12 shared voices.
+  good_for:
+  - High quality audio
+  license_summary:
+  - Free for personal and commercial use.
+  - Only clone your own voice or voices you have permission to use.
+  - This summary is for reference; the original text prevails.

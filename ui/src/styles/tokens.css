@@ -1,0 +1,95 @@
+/* 디자인 토큰 - docs/design/design.md 2.3~2.5 그대로. 부품 안에 색 값을 직접 쓰지 않아요(components.md 15). */
+:root,
+[data-theme="light"] {
+  --canvas: #f6f5f1;
+  --surface: #ffffff;
+  --raised: #ffffff;
+  --sunken: #eeece6;
+  --line: #e2dfd6;
+  --line-strong: #8f8b7e;
+  --ink-900: #16181d;
+  --ink-700: #3a3e47;
+  --ink-500: #5f6470;
+  --ink-400: #8a8f9a;
+  --accent: #2f55d4;
+  --accent-strong: #2546b8;
+  --accent-soft: #e8edfc;
+  --action: #16181d;
+  --action-hover: #2b2e36;
+  --on-action: #ffffff;
+  --success: #1f7a4d;
+  --success-soft: #e3f3ea;
+  --success-on-soft: #17603c;
+  --warning: #8f5a00;
+  --warning-soft: #fbf0d9;
+  --warning-on-soft: #7a4d00;
+  --danger: #c0362c;
+  --danger-soft: #fbe9e7;
+  --danger-on-soft: #a32b22;
+  --scrim: rgba(22, 24, 29, 0.45);
+  --shadow-float: 0 8px 28px rgba(22, 24, 29, 0.14), 0 1px 3px rgba(22, 24, 29, 0.08);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --canvas: #101216;
+  --surface: #181b21;
+  --raised: #20242c;
+  --sunken: #0b0d10;
+  --line: #2a2f38;
+  --line-strong: #6b7280;
+  --ink-900: #eceef2;
+  --ink-700: #c5c9d1;
+  --ink-500: #9ba1ad;
+  --ink-400: #737a87;
+  --accent: #8ea6ff;
+  --accent-strong: #b4c3ff;
+  --accent-soft: #1c2646;
+  --action: #eceef2;
+  --action-hover: #d6d9e0;
+  --on-action: #101216;
+  --success: #5cc48d;
+  --success-soft: #15301f;
+  --success-on-soft: #8addb0;
+  --warning: #e9b44c;
+  --warning-soft: #33270f;
+  --warning-on-soft: #f2cc7e;
+  --danger: #f0776c;
+  --danger-soft: #3a1a17;
+  --danger-on-soft: #f6a59d;
+  --scrim: rgba(0, 0, 0, 0.6);
+  --shadow-float: 0 10px 32px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+:root {
+  --font: "Pretendard Variable", Pretendard, -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+  --mono: "JetBrains Mono", D2Coding, Consolas, "Malgun Gothic", monospace;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 48px;
+  --radius-control: 8px;
+  --radius-card: 10px;
+  --radius-sheet: 14px;
+  --radius-pill: 999px;
+  --h-sm: 28px;
+  --h-md: 32px;
+  --h-lg: 40px;
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --titlebar: 36px;
+  --nav: 208px;
+  --statusbar: 28px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-base: 0ms;
+  }
+}

@@ -1,0 +1,18 @@
+Sori Studio
+Copyright 2026 세종소프트 유한회사
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product includes or uses the following third-party software:
+
+- Pretendard font - SIL Open Font License 1.1 (bundled in the built UI)
+- React, React DOM - MIT License
+- Lucide icons (lucide-react) - ISC License
+- Electron (and Chromium) - MIT License and the Chromium licenses
+- FastAPI, Uvicorn, PyYAML - MIT / BSD-3-Clause licenses
+- uv (Astral) - Apache-2.0 / MIT, downloaded at install time
+
+TTS engines and model weights are NOT included in this repository or in
+the app. Each engine's code and weights are downloaded by the user from
+their official sources, under each engine's own license, which is shown
+to the user before download.

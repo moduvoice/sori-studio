@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src file:" />
+<title>Sori Studio</title>
+<style>
+  /* 화면 설계 2.3 토큰 일부(껍데기 쪽은 허브 화면 파일을 못 읽어서 여기 둬요) */
+  :root { --canvas:#f6f5f1; --surface:#fff; --sunken:#eeece6; --line:#e2dfd6; --line-strong:#8f8b7e; --ink-900:#16181d; --ink-700:#3a3e47; --ink-500:#5f6470; --accent:#2f55d4; --action:#16181d; --on-action:#fff; --success:#1f7a4d; --warning:#8f5a00; --warning-soft:#fbf0d9; --danger:#c0362c; --danger-soft:#fbe9e7; color-scheme: light; }
+  @media (prefers-color-scheme: dark) { :root { --canvas:#101216; --surface:#181b21; --sunken:#0b0d10; --line:#2a2f38; --line-strong:#6b7280; --ink-900:#eceef2; --ink-700:#c5c9d1; --ink-500:#9ba1ad; --accent:#8ea6ff; --action:#eceef2; --on-action:#101216; --success:#5cc48d; --warning:#e9b44c; --warning-soft:#33270f; --danger:#f0776c; --danger-soft:#3a1a17; color-scheme: dark; } }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; margin: 0; }
+  @font-face { font-family: "Pretendard Variable"; src: url("../ui/node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2") format("woff2-variations"); font-weight: 45 920; }
+  body { background: var(--canvas); color: var(--ink-900); font: 14px/22px "Pretendard Variable", Pretendard, "Segoe UI", "Malgun Gothic", sans-serif; word-break: keep-all; display: flex; align-items: center; justify-content: center; }
+  .drag { position: fixed; top: 0; left: 0; right: 150px; height: 36px; -webkit-app-region: drag; }
+  .box { width: 520px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; }
+  ol { list-style: none; padding: 0; margin: 0; width: 320px; display: flex; flex-direction: column; gap: 10px; }
+  li { display: flex; align-items: center; gap: 12px; color: var(--ink-500); }
+  li.done, li.run { color: var(--ink-900); }
+  li.fail { color: var(--danger); }
+  .ic { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--line-strong); flex: none; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; }
+  li.done .ic { background: var(--accent); border-color: var(--accent); }
+  li.run .ic { border-color: var(--accent); border-right-color: transparent; animation: spin .9s linear infinite; }
+  li.fail .ic { background: var(--danger); border-color: var(--danger); }
+  li .t { margin-left: auto; font-variant-numeric: tabular-nums; font-size: 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .msg { text-align: center; color: var(--ink-500); min-height: 22px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; width: 100%; }
+  .banner { border-radius: 10px; padding: 12px 16px; width: 100%; }
+  .banner.danger { background: var(--danger-soft); color: var(--danger); }
+  .banner.warn { background: var(--warning-soft); color: var(--warning); }
+  .banner b { display: block; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  button { font: inherit; height: 36px; padding: 0 16px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink-900); cursor: pointer; }
+  button.primary { background: var(--action); color: var(--on-action); border-color: transparent; }
+  button:disabled { opacity: .45; cursor: default; }
+  pre { background: var(--sunken); border-radius: 8px; padding: 12px; max-height: 260px; overflow: auto; font: 12px/18px Consolas, "Malgun Gothic", monospace; white-space: pre-wrap; word-break: break-all; margin: 0; width: 100%; }
+  .choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+  .choice { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .choice h3 { margin: 0; font-size: 15px; }
+  .choice p { margin: 0; color: var(--ink-500); font-size: 13px; line-height: 18px; flex: 1; }
+  .note { color: var(--ink-500); font-size: 12px; text-align: center; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="drag"></div>
+<div class="box" id="startup">
+  <div class="logo">
+    <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 50 C19 40 25 27 32 12 C39 27 45 40 56 50" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Sori Studio
+  </div>
+  <ol id="stages" aria-live="polite" hidden></ol>
+  <div class="msg" id="msg" aria-live="polite"></div>
+  <div id="fail" class="card" hidden></div>
+</div>
+
+<div class="box" id="recovery" hidden style="width: 760px">
+  <div class="logo">
+    <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden="true"><path d="M8 50 C19 40 25 27 32 12 C39 27 45 40 56 50" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span data-t="recovery"></span>
+  </div>
+  <div class="banner danger" role="alert"><b data-t="recoveryTitle"></b><span id="rcause"></span></div>
+  <div class="choices">
+    <div class="choice"><h3 data-t="log"></h3><p data-t="logBody"></p><button id="rlog" data-t="log"></button></div>
+    <div class="choice"><h3 data-t="fix"></h3><p data-t="fixBody"></p><button id="rfix" data-t="fix"></button></div>
+    <div class="choice"><h3 data-t="retry"></h3><p data-t="retryBody"></p><button class="primary" id="rretry" data-t="retry"></button></div>
+  </div>
+  <div class="row"><button id="rreport" data-t="report"></button></div>
+  <pre id="rout" hidden></pre>
+  <p class="note"><span data-t="noteKeep"></span><br /><span data-t="noteFake"></span></p>
+</div>
+
+<script>
+// 껍데기 문구 - 화면 언어(허브 설정 또는 OS 언어)에 맞춰 두 벌
+const TT = {
+  ko: {
+    python: "프로그램 확인", server: "켜는 중", running: "도는 중", engines: "모델 목록 읽는 중", ready: "준비",
+    slow: "평소보다 오래 걸려요.", attached: "이미 켜져 있는 Sori Studio 에 붙었어요.",
+    restarting: (n, m) => `다시 켜는 중이에요 (${n} / ${m})`,
+    failTitle: "Sori Studio 를 켜지 못했어요.",
+    fail: {
+      missing: "필요한 파이썬을 찾지 못했어요. 앱을 다시 설치해 주세요.",
+      blocked: "보안 프로그램이 실행을 막은 것 같아요. Sori Studio 폴더를 예외에 넣은 뒤 다시 켜 주세요.",
+      broken: "앱 실행 환경이 깨졌어요. '환경 고치기' 를 눌러 주세요.",
+      disk: "디스크가 가득 찼어요. 공간을 비운 뒤 다시 켜 주세요.",
+      port: "쓸 수 있는 포트를 찾지 못했어요. 다른 프로그램을 닫고 다시 켜 주세요.",
+      unknown: "원인을 찾지 못했어요. 로그를 봐 주세요.",
+    },
+    sec: (s) => `${s}초`, home: "<Sori Studio 폴더>", noLog: "(로그 없음)", fixing: "고치는 중…",
+    fixed: "고쳤어요. '다시 켜기' 를 눌러 주세요.", notFixed: "고치지 못했어요. 로그를 문제 알리기에 붙여 주세요.", lastStage: "마지막 단계",
+    recovery: "복구 모드", recoveryTitle: "여러 번 멈춰서 자동으로 다시 켜기를 멈췄어요.",
+    log: "로그 보기", logBody: "무슨 일이 있었는지 봐요. 문제를 알릴 때 붙여 넣어요.",
+    fix: "환경 고치기", fixBody: "앱 실행 환경을 처음 설치한 그대로 다시 맞춰요.",
+    retry: "다시 켜기", retryBody: "한 번 더 켜 봐요.", report: "문제 알리기(GitHub)",
+    noteKeep: "어떤 선택에서도 만든 파일과 받은 모델은 지우지 않아요.",
+    noteFake: "공식이 아닌 '고침 도구'를 받지 마세요. 공식 내려받기는 GitHub 저장소 한 곳이에요.",
+  },
+  en: {
+    python: "Checking programs", server: "Starting", running: "Running", engines: "Reading the model list", ready: "Ready",
+    slow: "This is taking longer than usual.", attached: "Connected to Sori Studio that was already running.",
+    restarting: (n, m) => `Restarting (${n} / ${m})`,
+    failTitle: "Sori Studio couldn't start.",
+    fail: {
+      missing: "The required Python wasn't found. Please reinstall the app.",
+      blocked: "A security program seems to have blocked it. Add the Sori Studio folder as an exception, then start again.",
+      broken: "The app's environment is broken. Press 'Repair environment'.",
+      disk: "The disk is full. Free up space, then start again.",
+      port: "No free port was found. Close other programs and start again.",
+      unknown: "We couldn't find out why. Please check the log.",
+    },
+    sec: (s) => `${s} s`, home: "<Sori Studio folder>", noLog: "(no log)", fixing: "Repairing…",
+    fixed: "Repaired. Press 'Restart'.", notFixed: "Couldn't repair. Please paste the log when reporting the problem.", lastStage: "Last stage",
+    recovery: "Recovery mode", recoveryTitle: "It stopped several times, so automatic restarts were halted.",
+    log: "Show log", logBody: "See what happened. Paste it when you report a problem.",
+    fix: "Repair environment", fixBody: "Restores the app's environment to how it was first installed.",
+    retry: "Restart", retryBody: "Try starting it once more.", report: "Report a problem (GitHub)",
+    noteKeep: "None of these options delete files you made or models you downloaded.",
+    noteFake: "Don't download unofficial 'fix tools'. The only official download is the GitHub repository.",
+  },
+};
+const T = TT[(window.soriShell && window.soriShell.lang) || "en"] || TT.en;
+document.documentElement.lang = (window.soriShell && window.soriShell.lang) || "en";
+document.querySelectorAll("[data-t]").forEach((el) => (el.textContent = T[el.dataset.t]));
+const S = window.soriShell;
+const t0 = {};
+const stagesEl = document.getElementById("stages");
+const msg = document.getElementById("msg");
+const failEl = document.getElementById("fail");
+
+function render(order) {
+  stagesEl.innerHTML = "";
+  for (const k of order) {
+    const li = document.createElement("li");
+    li.id = "s-" + k;
+    li.innerHTML = `<span class="ic" aria-hidden="true"></span><span>${T[k]}</span><span class="t"></span>`;
+    stagesEl.appendChild(li);
+  }
+}
+render(["python", "server", "engines", "ready"]);
+// 2초 안에 끝나면 단계 목록 없이 로고만(깜박임 방지)
+const showTimer = setTimeout(() => (stagesEl.hidden = false), 2000);
+
+S.onReset(({ restarting, limit }) => {
+  render(["python", "server", "engines", "ready"]);
+  failEl.hidden = true;
+  msg.textContent = restarting ? T.restarting(restarting, limit) : "";
+  if (restarting) stagesEl.hidden = false;
+});
+
+S.onStage((d) => {
+  const li = document.getElementById("s-" + d.name);
+  if (!li) return;
+  if (d.state === "run") { t0[d.name] = Date.now(); li.className = "run"; }
+  if (d.state === "done") {
+    li.className = "done";
+    li.querySelector(".ic").textContent = "✓";
+    if (t0[d.name]) li.querySelector(".t").textContent = T.sec(((Date.now() - t0[d.name]) / 1000).toFixed(1));
+    if (d.attached) msg.textContent = T.attached;
+  }
+  if (d.state === "slow") msg.textContent = T.slow;
+  if (d.state === "fail") {
+    clearTimeout(showTimer);
+    stagesEl.hidden = false;
+    li.className = "fail";
+    li.querySelector(".ic").textContent = "✕";
+    const title = T.failTitle;
+    const body = T.fail[d.kind] || T.fail.unknown;
+    failEl.hidden = false;
+    failEl.innerHTML = `<div class="banner danger" role="alert"><b>${title}</b>${body}</div>
+      <div class="row" style="margin-top:12px">
+        ${d.kind === "broken" ? `<button class="primary" id="ffix">${T.fix}</button><button id="fretry">${T.retry}</button>` : `<button class="primary" id="fretry">${T.retry}</button>`}
+        <button id="flog">${T.log}</button>
+      </div><pre id="fout" hidden></pre>`;
+    document.getElementById("fretry").onclick = () => S.retry();
+    document.getElementById("flog").onclick = () => showLog(document.getElementById("fout"));
+    const fx = document.getElementById("ffix");
+    if (fx) fx.onclick = () => fix(fx, document.getElementById("fout"));
+  }
+});
+
+async function showLog(pre) {
+  const info = await S.recoveryInfo();
+  pre.hidden = false;
+  pre.textContent = info.log.join("\n").split(info.home).join(T.home) || T.noLog;
+  pre.scrollTop = pre.scrollHeight;
+}
+async function fix(btn, pre) {
+  btn.disabled = true;
+  btn.textContent = T.fixing;
+  const r = await S.fixEnv();
+  pre.hidden = false;
+  pre.textContent = (r.ok ? T.fixed : T.notFixed) + "\n\n" + r.out;
+  btn.disabled = false;
+  btn.textContent = T.fix;
+}
+
+if (location.hash === "#recovery") {
+  document.getElementById("startup").hidden = true;
+  document.getElementById("recovery").hidden = false;
+  S.recoveryInfo().then((i) => {
+    if (i.failure) document.getElementById("rcause").textContent = `${T.lastStage}: ${T[i.failure.stage] || i.failure.stage} · ${i.failure.detail} · ${new Date(i.failure.at).toLocaleTimeString(document.documentElement.lang)}`;
+  });
+  const out = document.getElementById("rout");
+  document.getElementById("rlog").onclick = () => showLog(out);
+  document.getElementById("rfix").onclick = (e) => fix(e.currentTarget, out);
+  document.getElementById("rretry").onclick = () => S.retry();
+  document.getElementById("rreport").onclick = () => S.report();
+}
+</script>
+</body>
+</html>

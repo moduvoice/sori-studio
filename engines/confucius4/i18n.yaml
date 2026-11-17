@@ -1,0 +1,15 @@
+# 화면 언어별 레시피 문구(카탈로그가 recipe.yaml 의 i18n 으로 합쳐요). 없는 칸은 recipe.yaml 의 한국어를 써요.
+en:
+  selftest:
+  - Hello, this is the Sori Studio self-test.
+  - Today is November 17th, and it's five degrees above zero.
+  - If this sentence sounds clear, the install is done.
+  summary: The strongest engine at imitating a voice. Speaks with 12 shared voices. Write numbers out in Korean for best results.
+  good_for:
+  - Clear narration
+  human_eval_line: Very strong at matching a voice. It tends to read numbers in English.
+  human_eval_by: Rated by 1 person (2026-11-16)
+  license_summary:
+  - Free for personal and commercial use (main model). The bundled w2v-bert-2.0 and BigVGAN are MIT; CAMPPlus is Apache-2.0.
+  - Only clone your own voice or voices you have permission to use.
+  - This summary is for reference; the original text prevails.

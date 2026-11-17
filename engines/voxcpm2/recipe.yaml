@@ -1,0 +1,70 @@
+# VoxCPM2 레시피(판 1, 2026-11-17). 공용 기본 목소리 12명(참조 클립)으로 말해요.
+id: voxcpm2
+name: VoxCPM2
+recipe_version: 1
+role: tts
+summary: 48kHz 고음질. 긴 글에 강해요. 공용 목소리 12명으로 말해요.
+maker: OpenBMB
+homepage: https://github.com/OpenBMB/VoxCPM
+
+devices: {cpu: ok, nvidia: ok, mac: unverified}
+measured:
+  syll_rate: 5.0        # 초당 한글 음절(Windows 스팟 소리 실측 2026-11-17) - 길이 검사 기준
+  at: "2026-11-16"
+  evidence: verified
+  cer_ko: 0.0093
+  hallu: "3/687"
+  sim_ref: 0.76
+  rtf_gpu: 1.3           # Windows 스팟 실측(한 줄씩). 벤치 0.51
+  rtf_cpu: 8.0           # 추정 - CPU 는 매우 느림
+  gpu_mem_gb: 8.4        # Windows 스팟 실측 2026-11-17(벤치 기록 6.6 보다 큼)
+  ram_gb: 10
+  load_s: 40
+  sample_rate: 48000
+human_eval:
+  line: 자연스러워요. 약간 현장음이 들리는 느낌이 있어요. 가끔 대본에 없는 말(외국어)이 끼어요 - 길이 검사로 다시 만들어요.
+  short: 자연스러움 좋음·잔잡음 조금
+  by: 사람 평가 1명(2026-11-16)
+good_for: [오디오북·긴 글, 고음질 나레이션]
+
+license:
+  id: apache-2.0
+  name: Apache-2.0
+  url: https://huggingface.co/openbmb/VoxCPM2
+  commercial: "yes"
+  text_file: LICENSE-weights.txt
+  summary:
+    - 개인·회사 모두 상업적으로 쓸 수 있어요.
+    - 모델을 고쳐 다시 배포할 때는 라이선스 원문과 바꾼 점을 함께 줘야 해요.
+    - 남의 목소리를 복제할 때는 그 사람의 허락이 필요해요(라이선스와 별개로 법·윤리).
+maintenance: {status: active}
+
+python: "3.12"
+packages:
+  win-x64: {cuda: requirements-win-x64-cu130.txt, cpu: requirements-win-x64-cpu.txt}
+env_bytes: {cuda: 4250000000, cpu: 1200000000}   # cuda 는 Windows 스팟 실측, cpu 는 추정
+requires: {nvidia_driver: 580}
+pip_index: {cuda: "https://download.pytorch.org/whl/cu130", cpu: "https://download.pytorch.org/whl/cpu"}
+
+weights:
+  - dir: voxcpm2
+    sources: [{repo: openbmb/VoxCPM2, revision: 7936080b41163874f38610f46f438e2c0757f9fd}]
+    files:
+      - {path: audiovae.pth, size: 376951122, sha256: 94b5d51e107e0507d4acc976cfdadb64edd6fd06d1f751dadbf2fd1594274bf1}
+      - {path: config.json, size: 4336, sha256: 405f0dcd92f7feba6011ed4eac5c8d4f74cba9712f07fd5cfa3063bbdd95402c}
+      - {path: model.safetensors, size: 4580080592, sha256: f7f964cfa9da23653baec6e6f7750719977ad944ed9f95fe52fe3a620506891d}
+      - {path: special_tokens_map.json, size: 1632, sha256: 068594063e37662c02b21acf42ebb334ef6a74fb810e68a2368f88f08351de76}
+      - {path: tokenization_voxcpm2.py, size: 2895, sha256: 84489ea32b6ee0cae22ed5480cacb6df85c46624c3119be9a2021c3649a12729}
+      - {path: tokenizer.json, size: 3676772, sha256: f8984687e4a92a3503d521396d454b7d68e9fdaab2a0288eb3536c7c1aa4bc20}
+      - {path: tokenizer_config.json, size: 5059, sha256: e78a3ebb48a0b9437efd1823b6b726c823da89e49dd8bcc90c02419d9baa772b}
+
+adapter: adapter.py
+max_chars: 300
+voices_from: shared      # engines/_voices 의 가상 인물 12명(Qwen3-TTS 가 만든 목소리)
+default_voice: bora
+features: [목소리 복제, 48kHz]
+
+selftest:
+  - 안녕하세요, 소리 스튜디오 자가 시험이에요.
+  - 오늘은 십일월 십칠일이고, 기온은 영상 오도예요.
+  - 이 문장이 또렷하게 들리면 설치가 끝난 거예요.

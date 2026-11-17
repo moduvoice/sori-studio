@@ -1,0 +1,100 @@
+# Supertonic-3 엔진 레시피(판 1). 허브가 이 파일대로 설치·실행해요. 설명: docs/sori-studio-features.md 4.4·4.10·4.11.
+id: supertonic-3
+name: Supertonic-3
+recipe_version: 1
+role: tts
+summary: 가볍고 정확한 CPU 엔진. GPU 없이 바로 써요. 알림·안내·빠른 초안에 좋아요.
+maker: 수퍼톤(국내)
+homepage: https://github.com/supertone-oss-archive/supertonic
+
+# 장치: native = 그 장치용 엔진, ok = 됨, no = 안 됨, unverified = 측정 없음
+devices: {cpu: native, nvidia: "no", mac: unverified}
+
+# 측정(oh-my-tts 벤치 2026-11-16, g7.8xlarge CPU, 497줄). 판정·시간 한도·카드의 근거.
+measured:
+  syll_rate: 4.8        # 초당 한글 음절(Windows 스팟 소리 실측 2026-11-17) - 길이 검사 기준
+  at: "2026-11-16"
+  evidence: verified      # verified = 우리 측정 + 사람 평가 / measured = 기계 점수만 / unverified
+  cer_ko: 0.0087          # 발음 오류율 0.87%
+  hallu: "0/497"          # 대본에 없는 말이 낀 줄
+  rtf_cpu: 0.49           # 소리 1초를 0.49초에 만듦(벤치). 이 개발 PC 8코어 4스레드 실측 0.30
+  ram_gb: 1.5             # 추정 - 자가 시험 실측으로 고침
+  load_s: 10              # 추정(개발 PC 실측 1.7초)
+  sample_rate: 44100
+human_eval:
+  line: 기계적이지만 소리가 아주 정확하고 깨끗해요. 가볍고 빨라요.
+  short: 기계적이나 정확·깨끗·빠름
+  by: 사람 평가 1명(2026-11-16)
+good_for: [알림·안내, 빠른 초안, GPU 없는 PC]
+
+license:
+  id: openrail-m
+  name: BigScience Open RAIL-M
+  url: https://huggingface.co/supertone-oss-archive/supertonic-3/blob/main/LICENSE
+  commercial: conditional
+  text_file: LICENSE-weights.txt     # 원문(공식 파일과 같음 - git blob 1e2cbe6 확인). 화면은 restrictions_from 부터 보여 줘요
+  restrictions_from: "Attachment A"
+  summary:
+    - 모델을 쓰고 고칠 수 있고, 만든 소리를 상업적으로도 쓸 수 있어요.
+    - 단 원문 부록 A 의 용도 제한을 지켜야 해요.
+    - 특히 소리에 중요한 것 - 남이 기계가 만든 것임을 알 수 있게 밝히지 않고 퍼뜨리기, 동의 없이 다른 사람 흉내 내기(딥페이크), 남을 해칠 거짓 정보, 괴롭힘·명예훼손은 안 돼요.
+    - 그 밖에 법 위반, 미성년자를 해치는 일, 차별, 의료 조언, 법 집행·이민 심사 판단 등에 쓸 수 없어요.
+    - 모델을 남에게 넘길 때는 같은 용도 제한을 걸어야 해요. 요약은 참고용이고 원문이 우선해요.
+maintenance:
+  status: archived
+  since: "2026-07-23"
+  note: 개발사가 오픈소스 개발·지원을 끝내고 저장소를 보관 조직으로 옮겼어요. 업데이트·보안 패치가 없어요. 받은 파일은 계속 쓸 수 있어요.
+  archive_url: https://huggingface.co/supertone-oss-archive/supertonic-3
+
+python: "3.12"
+env_bytes: {cpu: 120000000}   # 엔진 환경 실측(개발 PC 2026-11-17) - "받을 양"·디스크 표시용
+packages:
+  win-x64: requirements-win-x64.txt
+  linux-x64: requirements-linux-x64.txt
+
+# 가중치: 위 출처부터 차례로 시도하고 크기·sha256 으로 검증(두 출처 파일이 같음, 2026-11-17 확인).
+weights:
+  sources:
+    - {repo: supertone-oss-archive/supertonic-3, revision: aafc6e32416a594460b32413efc49d7fe4ce6d46}
+    - {repo: Supertone/supertonic-3, revision: 724fb5abbf5502583fb520898d45929e62f02c0b}
+  files:
+    - {path: onnx/duration_predictor.onnx, size: 3700147, sha256: c3eb91414d5ff8a7a239b7fe9e34e7e2bf8a8140d8375ffb14718b1c639325db}
+    - {path: onnx/text_encoder.onnx, size: 36416150, sha256: c7befd5ea8c3119769e8a6c1486c4edc6a3bc8365c67621c881bbb774b9902ff}
+    - {path: onnx/tts.json, size: 8253, sha256: 42078d3aef1cd43ab43021f3c54f47d2d75ceb4e75f627f118890128b06a0d09}
+    - {path: onnx/unicode_indexer.json, size: 277676, sha256: 9bf7346e43883a81f8645c81224f786d43c5b57f3641f6e7671a7d6c493cb24f}
+    - {path: onnx/vector_estimator.onnx, size: 256534781, sha256: 883ac868ea0275ef0e991524dc64f16b3c0376efd7c320af6b53f5b780d7c61c}
+    - {path: onnx/vocoder.onnx, size: 101424195, sha256: 085de76dd8e8d5836d6ca66826601f615939218f90e519f70ee8a36ed2a4c4ba}
+    - {path: voice_styles/F1.json, size: 292046, sha256: bbdec6ee00231c2c742ad05483df5334cab3b52fda3ba38e6a07059c4563dbc2}
+    - {path: voice_styles/F2.json, size: 292423, sha256: 7c722c6a72707b1a77f035d67f0d1351ba187738e06f7683e8c72b1df3477fc6}
+    - {path: voice_styles/F3.json, size: 290794, sha256: 12f6ef2573baa2defa1128069cb59f203e3ab67c92af77b42df8a0e3a2f7c6ab}
+    - {path: voice_styles/F4.json, size: 291808, sha256: c2fa764c1225a76dfc3e2c73e8aa4f70d9ee48793860eb34c295fff01c2e032b}
+    - {path: voice_styles/F5.json, size: 291479, sha256: 45966e73316415626cf41a7d1c6f3b4c70dbc1ba2bee5c1978ef0ce33244fc8d}
+    - {path: voice_styles/M1.json, size: 291748, sha256: e35604687f5d23694b8e91593a93eec0e4eca6c0b02bb8ed69139ab2ea6b0a5b}
+    - {path: voice_styles/M2.json, size: 292055, sha256: b76cbf62bac707c710cf0ae5aba5e31eea1a6339a9734bfae33ab98499534a50}
+    - {path: voice_styles/M3.json, size: 290198, sha256: ea1ac35ccb91b0d7ecad533a2fbd0eec10c91513d8951e3b25fbba99954e159b}
+    - {path: voice_styles/M4.json, size: 291522, sha256: ca8eefad4fcd989c9379032ff3e50738adc547eeb5e221b82593a6d7b3bac303}
+    - {path: voice_styles/M5.json, size: 291469, sha256: dd22b92740314321f8ae11c5e87f8dd60d060f15dd3a632b5adf77f471f77af2}
+
+adapter: adapter.py
+threads: 4              # CPU 엔진 기본 4스레드(옆 GPU 엔진이 느려지지 않게)
+max_chars: 300
+
+voices:
+  - {id: F1, name: 여성 1, gender: f}
+  - {id: F2, name: 여성 2, gender: f}
+  - {id: F3, name: 여성 3, gender: f}
+  - {id: F4, name: 여성 4, gender: f}
+  - {id: F5, name: 여성 5, gender: f}
+  - {id: M1, name: 남성 1, gender: m}
+  - {id: M2, name: 남성 2, gender: m}
+  - {id: M3, name: 남성 3, gender: m}
+  - {id: M4, name: 남성 4, gender: m}
+  - {id: M5, name: 남성 5, gender: m}
+default_voice: F1
+
+tags: {laugh: "<laugh>", breath: "<breath>", sigh: "<sigh>"}
+
+selftest:
+  - 안녕하세요, 소리 스튜디오 자가 시험이에요.
+  - 오늘은 십일월 십칠일이고, 기온은 영상 오도예요.
+  - 이 문장이 또렷하게 들리면 설치가 끝난 거예요.

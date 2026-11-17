@@ -1,0 +1,14 @@
+{
+  "name": "sori-studio-shell",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Sori Studio desktop shell (Electron) - starts and watches the local hub",
+  "license": "Apache-2.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^45.3.3"
+  }
+}

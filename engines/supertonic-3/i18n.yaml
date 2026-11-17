@@ -1,0 +1,31 @@
+# 화면 언어별 레시피 문구(카탈로그가 recipe.yaml 의 i18n 으로 합쳐요). 없는 칸은 recipe.yaml 의 한국어를 써요.
+en:
+  selftest:
+  - Hello, this is the Sori Studio self-test.
+  - Today is November 17th, and it's five degrees above zero.
+  - If this sentence sounds clear, the install is done.
+  summary: A light, accurate CPU engine. Works right away without a GPU. Good for alerts, announcements and quick drafts.
+  good_for:
+  - Alerts & announcements
+  - Quick drafts
+  - PCs without a GPU
+  human_eval_line: Mechanical, but very accurate and clean. Light and fast.
+  human_eval_by: Rated by 1 person (2026-11-16)
+  license_summary:
+  - You may use and modify the model, and use the audio you make commercially.
+  - But you must follow the use restrictions in Attachment A of the original text.
+  - 'Especially for audio: no spreading it without making clear it''s machine-made, no imitating others without consent (deepfakes), no harmful false information, no harassment or defamation.'
+  - It also can't be used to break the law, harm minors, discriminate, give medical advice, or make law-enforcement or immigration decisions.
+  - If you pass the model on, you must apply the same restrictions. This summary is for reference; the original text prevails.
+  maintenance_note: The maker ended open-source development and support and moved the repository to an archive organization. No updates or security patches. Files you've downloaded keep working.
+  voices:
+    F1: Female 1
+    F2: Female 2
+    F3: Female 3
+    F4: Female 4
+    F5: Female 5
+    M1: Male 1
+    M2: Male 2
+    M3: Male 3
+    M4: Male 4
+    M5: Male 5
