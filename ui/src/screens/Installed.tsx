@@ -1,13 +1,14 @@
 // H3 내 모델 - 받은 모델 목록(이름·상태·용량·소리 만들기·지우기)만.
 // UX 리뷰(2026-11-17): 켜기/끄기·메모리·최근 일·디스크 탭은 뺐어요. 모델은 소리를 만들 때 저절로 켜져요.
 import { useEffect, useState } from "react";
-import { Download, HardDrive } from "lucide-react";
+import { AudioLines, HardDrive, HardDriveDownload, Trash2 } from "lucide-react";
 import { api, errorText, type Drive, type Engine } from "../lib/api";
 import { bytes } from "../lib/format";
 import { t } from "../lib/i18n";
 import { go } from "../lib/router";
 import { useHub, useToast } from "../lib/store";
 import { Banner, Button, EmptyState } from "../components/ui";
+import { Avatar, GIcon } from "../components/art";
 import { installedOk } from "../components/engine";
 import { LogDialog, RemoveDialog } from "../components/install";
 
@@ -15,21 +16,23 @@ export default function Installed() {
   const { engines, loaded } = useHub();
   const mine = engines.filter((e) => e.install.status !== "none");
   return (
-    <div className="page narrow">
-      <div className="page-head">
-        <h1 className="t-h1 grow">{t("installed.title")}</h1>
-      </div>
+    <div className="page">
       {loaded && mine.length === 0 ? (
         <EmptyState
-          icon={<Download size={20} />}
+          icon={<GIcon size="lg" hue="green"><HardDriveDownload size={24} /></GIcon>}
           title={t("installed.empty")}
           body={t("installed.emptyBody")}
           action={<Button variant="primary" size="lg" onClick={() => go({ name: "models" })}>{t("installed.goModels")}</Button>}
         />
       ) : (
         <>
+          <div className="page-head">
+            <div className="grow">
+              <h1 className="t-h1">{t("installed.title")}</h1>
+              <FolderNote />
+            </div>
+          </div>
           <List list={mine} />
-          <FolderNote />
         </>
       )}
     </div>
@@ -57,17 +60,18 @@ function List({ list }: { list: Engine[] }) {
   const showLog = async (e: Engine) => setLog({ name: e.name, lines: (await api<{ log: string[] }>(`/hub/engines/${e.id}/log`)).log });
 
   return (
-    <section className="card">
-      {list.map((e, i) => {
+    <section className="list">
+      {list.map((e) => {
         const ok = installedOk(e);
         const dead = e.run.state === "dead";
         const pctDone = e.install.progress?.bytes_total ? Math.floor((e.install.progress.bytes_done / e.install.progress.bytes_total) * 100) : 0;
         return (
-          <div key={e.id} className="col" style={{ padding: "14px 20px", borderTop: i ? "1px solid var(--line)" : "none", gap: 8 }}>
-            <div className="row" style={{ gap: 12 }}>
-              <div className="grow col" style={{ gap: 2 }}>
-                <strong>{e.name}</strong>
-                <span className="t-caption muted num">
+          <div key={e.id} className="lrow-wrap">
+            <div className="lrow">
+              <Avatar name={e.name} seed={e.id} />
+              <div className="lrow-main">
+                <span className="lrow-title">{e.name}</span>
+                <span className="lrow-sub num">
                   {ok
                     ? bytes(e.disk_bytes)
                     : e.install.status === "installing"
@@ -75,20 +79,24 @@ function List({ list }: { list: Engine[] }) {
                       : t(`install.status.${e.install.status}`)}
                 </span>
               </div>
-              {ok ? (
-                <>
-                  <Button size="sm" variant="primary" onClick={() => go({ name: "try", engine: e.id })}>{t("install.tryIt")}</Button>
-                  <Button size="sm" variant="ghost" onClick={() => setRm(e)}>{t("install.remove")}</Button>
-                </>
-              ) : (
-                <Button size="sm" onClick={() => go({ name: "model", id: e.id })}>{t("common.details")}</Button>
-              )}
+              <div className="lrow-side">
+                {ok ? (
+                  <>
+                    <Button size="sm" variant="primary" icon={<AudioLines size={14} />} onClick={() => go({ name: "try", engine: e.id })}>{t("install.tryIt")}</Button>
+                    <Button size="sm" variant="ghost" icon={<Trash2 size={14} />} onClick={() => setRm(e)}>{t("install.remove")}</Button>
+                  </>
+                ) : (
+                  <Button size="sm" onClick={() => go({ name: "model", id: e.id })}>{t("common.details")}</Button>
+                )}
+              </div>
             </div>
             {dead && (
+              <div className="lrow-more" style={{ paddingLeft: 18 }}>
               <Banner tone="danger" title={t("run.deadTitle")}>
                 <Button variant="primary" busy={busy === e.id} onClick={() => restart(e)}>{t("run.restart")}</Button>
                 <Button variant="link" onClick={() => showLog(e)}>{t("common.showLog")}</Button>
               </Banner>
+              </div>
             )}
           </div>
         );
@@ -107,8 +115,8 @@ function FolderNote() {
   if (!d) return null;
   const drive = d.drives.find((x) => d.current.toUpperCase().startsWith(x.root.toUpperCase()));
   return (
-    <p className="t-caption muted row" style={{ gap: 6, marginTop: 12 }}>
-      <HardDrive size={14} aria-hidden />
+    <p className="row" style={{ gap: 6, fontSize: 13 }}>
+      <HardDrive size={14} aria-hidden style={{ flex: "none" }} />
       <span style={{ wordBreak: "break-all" }}>
         {t("installed.folder", { path: d.current })}
         {drive ? ` · ${t("installed.free", { size: bytes(drive.free_bytes) })}` : ""}

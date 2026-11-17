@@ -71,7 +71,7 @@ function PlanConsent({ e }: { e: Engine }) {
   return (
     <div className="col" style={{ gap: 16 }}>
       <div>
-        <p className="t-body" style={{ margin: 0 }}>
+        <p className="t-h3 num" style={{ margin: 0 }}>
           {t("install.plan.oneLine", { size: bytes(total), min: plan ? Math.max(1, Math.round(plan.est_minutes)) : "…" })}
         </p>
         <p className="note" style={{ marginTop: 4 }}>{t("install.plan.officialOnly")}</p>
@@ -112,7 +112,7 @@ export function LicenseConsent({ e, agree, setAgree }: { e: Engine; agree: boole
   return (
     <div className="col" style={{ gap: 8 }}>
       <span className="t-h3">{t("install.licenseTitle")}</span>
-      <ul style={{ margin: 0, paddingLeft: 18 }} className="col">
+      <ul style={{ margin: 0, paddingLeft: 18, gap: 4 }} className="col ink-700">
         {summary.slice(0, 2).map((x, i) => (
           <li key={i} style={{ listStyle: "disc" }}>{x}</li>
         ))}
@@ -341,8 +341,8 @@ function Installed({ e, inWizard }: { e: Engine; inWizard?: boolean }) {
       {!inWizard && <SelftestLines e={e} />}
       {!inWizard && (
         <div className="row">
-          <Button variant="primary" onClick={() => go({ name: "try", engine: e.id })}>{t("install.tryIt")}</Button>
-          <Button variant="ghost" className="right" onClick={() => setRm(true)}>{t("install.remove")}</Button>
+          <Button variant="primary" size="lg" className="grow" onClick={() => go({ name: "try", engine: e.id })}>{t("install.tryIt")}</Button>
+          <Button variant="ghost" size="lg" onClick={() => setRm(true)}>{t("install.remove")}</Button>
         </div>
       )}
       {rm && <RemoveDialog e={e} onClose={() => setRm(false)} />}
@@ -363,11 +363,11 @@ export function SelftestLines({ e }: { e: Engine }) {
       {st.lines.map((l, i) => (
         <div key={i} className="col" style={{ gap: 4 }}>
           <div className="row t-body">
-            <Check size={14} color="var(--success)" aria-hidden />
+            <Check size={14} color="var(--success)" aria-hidden style={{ flex: "none" }} />
             <span lang="ko">{l.text}</span>
           </div>
           {texts?.[i] && <span className="t-caption muted">{texts[i]}</span>}
-          <Player src={`/hub/engines/${e.id}/selftest/${i}.wav`} size="sm" label={l.text} bars={56} />
+          <div className="player-box"><Player src={`/hub/engines/${e.id}/selftest/${i}.wav`} size="sm" label={l.text} bars={56} /></div>
         </div>
       ))}
     </div>

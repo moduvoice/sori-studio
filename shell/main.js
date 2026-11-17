@@ -10,7 +10,9 @@ const fs = require("node:fs");
 const path = require("node:path");
 const http = require("node:http");
 
-const REPO = path.resolve(__dirname, "..");
+// 설치본(electron-builder)은 허브·엔진 레시피·화면을 resources/app-root 에 넣어요(etc/build_installer.py).
+const PACKAGED = app.isPackaged;
+const REPO = PACKAGED ? path.join(process.resourcesPath, "app-root") : path.resolve(__dirname, "..");
 const PORT = Number(process.env.SORI_PORT || 5150);
 const STAGES = ["python", "server", "engines", "ready"];
 const LIMIT_MS = { python: 5000, server: 40000, engines: 20000 };
@@ -35,8 +37,43 @@ function hubHome() {
   return path.join(require("node:os").homedir(), ".sori-studio");
 }
 
+// 설치본에 함께 넣은 uv(판 고정) - 허브 환경을 만들고, 허브가 엔진 환경을 만들 때도 써요
+function uvExe() {
+  if (!PACKAGED) return "uv";
+  return path.join(REPO, "bin", process.platform === "win32" ? "uv.exe" : "uv");
+}
+
+// 허브 파이썬 환경 자리: 설치본은 사용자 폴더(쓰기 가능)에, 개발판은 hub/.venv
+function hubEnvDir() {
+  return path.join(hubHome(), "hub-env");
+}
+
+// 허브 환경을 잠금 파일대로 맞춰요(설치본 첫 실행·환경 고치기). 파이썬은 uv 가 받아 사용자 폴더에 둬요.
+function syncHubEnv() {
+  return new Promise((resolve) => {
+    const env = { ...process.env };
+    const args = ["sync", "--frozen", "--no-dev"];
+    if (PACKAGED) {
+      args.push("--no-install-project", "--project", path.join(REPO, "hub"));
+      env.UV_PROJECT_ENVIRONMENT = hubEnvDir();
+      env.UV_PYTHON_INSTALL_DIR = path.join(hubHome(), "python");
+      env.UV_PYTHON_PREFERENCE = "only-managed";
+    }
+    const p = spawn(uvExe(), args, { cwd: path.join(REPO, "hub"), env, windowsHide: true, shell: !PACKAGED && process.platform === "win32" });
+    let out = "";
+    p.stdout.on("data", (d) => (out += d));
+    p.stderr.on("data", (d) => (out += d));
+    p.on("error", (e) => resolve({ ok: false, out: String(e) }));
+    p.on("exit", (code) => {
+      log(`허브 환경 맞추기 끝(코드 ${code})`);
+      resolve({ ok: code === 0, out: out.trim().split("\n").slice(-20).join("\n") });
+    });
+  });
+}
+
 function hubPython() {
   if (process.env.SORI_HUB_PYTHON) return process.env.SORI_HUB_PYTHON;
+  if (PACKAGED) return path.join(hubEnvDir(), process.platform === "win32" ? "Scripts/python.exe" : "bin/python");
   const venv = path.join(REPO, "hub", ".venv", process.platform === "win32" ? "Scripts/python.exe" : "bin/python");
   return venv; // 개발판: hub 폴더의 uv 환경. 설치본은 함께 넣은 파이썬을 SORI_HUB_PYTHON 으로 가리켜요(7단계)
 }
@@ -150,6 +187,14 @@ async function boot() {
   // 1 파이썬 확인
   stage("python", "run");
   const py = hubPython();
+  if (!fs.existsSync(py) && PACKAGED) {
+    // 설치본 첫 실행: 허브 환경을 만들어요(파이썬 받기 포함, 1~2분)
+    stage("python", "first"); // 시작 화면에 "처음 한 번 준비"
+    const slowFirst = setTimeout(() => stage("python", "slow"), 180000);
+    const r = await syncHubEnv();
+    clearTimeout(slowFirst);
+    if (!r.ok) return fail("python", "broken", r.out.split("\n").slice(-1)[0] || "uv sync");
+  }
   if (!fs.existsSync(py)) {
     return fail("python", "missing", `허브 파이썬을 찾지 못했어요: ${py}`);
   }
@@ -160,7 +205,7 @@ async function boot() {
   let errText = "";
   hub = spawn(py, ["-m", "sori_hub", "serve", "--port", String(PORT)], {
     cwd: path.join(REPO, "hub"),
-    env: { ...process.env, PYTHONIOENCODING: "utf-8", PYTHONUNBUFFERED: "1" },
+    env: { ...process.env, PYTHONIOENCODING: "utf-8", PYTHONUNBUFFERED: "1", ...(PACKAGED ? { SORI_UV: uvExe() } : {}) },
     windowsHide: true,
   });
   const me = hub;
@@ -290,9 +335,9 @@ function createWindow() {
     minWidth: 1120,
     minHeight: 720,
     title: "Sori Studio",
-    backgroundColor: dark ? "#101216" : "#F6F5F1",
+    backgroundColor: dark ? "#0A0B0E" : "#F6F5F1",
     titleBarStyle: "hidden",
-    titleBarOverlay: { color: dark ? "#101216" : "#F6F5F1", symbolColor: dark ? "#ECEEF2" : "#16181D", height: 36 },
+    titleBarOverlay: { color: dark ? "#0A0B0E" : "#F6F5F1", symbolColor: dark ? "#ECEEF2" : "#16181D", height: 48 }, // 화면 머리줄(48px)과 같은 높이·색
     icon: path.join(__dirname, "icon.png"),
     webPreferences: { preload: path.join(__dirname, "preload.js"), contextIsolation: true, sandbox: true, nodeIntegration: false },
   });
@@ -325,8 +370,8 @@ ipcMain.on("sori:theme", (_e, theme) => {
   if (!win || process.platform === "darwin") return;
   const dark = theme === "dark";
   try {
-    win.setTitleBarOverlay({ color: dark ? "#101216" : "#F6F5F1", symbolColor: dark ? "#ECEEF2" : "#16181D" });
-    win.setBackgroundColor(dark ? "#101216" : "#F6F5F1");
+    win.setTitleBarOverlay({ color: dark ? "#0A0B0E" : "#F6F5F1", symbolColor: dark ? "#ECEEF2" : "#16181D" });
+    win.setBackgroundColor(dark ? "#0A0B0E" : "#F6F5F1");
   } catch {}
 });
 ipcMain.handle("sori:recovery-info", () => ({ failure: lastFailure, log: logLines.slice(-200), home: hubHome(), restarts: restarts.length }));
@@ -359,21 +404,7 @@ ipcMain.handle("sori:report", () => {
   const body = encodeURIComponent(`What happened?\n\nLast stage: ${lastFailure ? lastFailure.stage + " · " + lastFailure.detail : "-"}\nOS: ${process.platform} ${require("node:os").release()}\n\n(Paste the log from "Show log")`);
   shell.openExternal(`https://github.com/moduvoice/sori-studio/issues/new?title=${encodeURIComponent("App won't start")}&body=${body}`);
 });
-ipcMain.handle("sori:fix-env", () => {
-  // 환경 고치기: 허브 파이썬 환경을 잠금 파일대로 다시 맞춰요(프로젝트·받은 모델은 그대로).
-  // 개발판은 uv sync, 설치본은 함께 넣은 잠금 파일로(7단계).
-  return new Promise((resolve) => {
-    const p = spawn("uv", ["sync", "--frozen"], { cwd: path.join(REPO, "hub"), windowsHide: true, shell: process.platform === "win32" });
-    let out = "";
-    p.stdout.on("data", (d) => (out += d));
-    p.stderr.on("data", (d) => (out += d));
-    p.on("error", (e) => resolve({ ok: false, out: String(e) }));
-    p.on("exit", (code) => {
-      log(`환경 고치기 끝(코드 ${code})`);
-      resolve({ ok: code === 0, out: out.trim().split("\n").slice(-20).join("\n") });
-    });
-  });
-});
+ipcMain.handle("sori:fix-env", () => syncHubEnv()); // 환경 고치기: 허브 파이썬 환경을 잠금 파일대로 다시(받은 모델은 그대로)
 
 if (!app.requestSingleInstanceLock()) {
   app.quit();

@@ -3,9 +3,10 @@ import { useEffect } from "react";
 import { Archive } from "lucide-react";
 import { openExternal, type Engine } from "../lib/api";
 import { t } from "../lib/i18n";
-import { go, href } from "../lib/router";
+import { go } from "../lib/router";
 import { useHub } from "../lib/store";
 import { dec } from "../lib/format";
+import { Avatar } from "../components/art";
 import { EvidenceBadge, LicenseBadge, MaintBadge, RuntimeBadge, VerdictStatus, loc, measuredAt } from "../components/engine";
 import { InstallPanel } from "../components/install";
 
@@ -24,18 +25,20 @@ export default function ModelDetail({ id }: { id: string }) {
   if (!e) return <div className="page muted">{loaded ? t("detail.notFound") : t("common.loading")}</div>;
   return (
     <div className="page detail">
-      <div className="crumb">
-        <a href={href({ name: "models" })}>{t("detail.backToList")}</a> / {e.name}
-      </div>
-      <div className="row row-wrap" style={{ gap: 12, marginBottom: 4 }}>
-        <h1 className="t-h1" style={{ fontSize: 26, lineHeight: "34px" }}>{e.name}</h1>
-        <EvidenceBadge e={e} />
-        <LicenseBadge e={e} />
-        <MaintBadge e={e} />
-        <RuntimeBadge e={e} />
-      </div>
-      <p className="muted" style={{ margin: "4px 0 8px" }}>{loc(e).summary}</p>
-      <div style={{ marginBottom: 20 }}><VerdictStatus v={e.this_pc} /></div>
+      <header className="detail-head">
+        <Avatar name={e.name} seed={e.id} size="lg" />
+        <div className="grow col" style={{ gap: 8 }}>
+          <div className="row row-wrap" style={{ gap: 8 }}>
+            <h1 style={{ marginRight: 6 }}>{e.name}</h1>
+            <EvidenceBadge e={e} />
+            <LicenseBadge e={e} />
+            <MaintBadge e={e} />
+            <RuntimeBadge e={e} />
+          </div>
+          <p className="muted" style={{ margin: 0, fontSize: 15, lineHeight: "24px", maxWidth: 720 }}>{loc(e).summary}</p>
+          <VerdictStatus v={e.this_pc} />
+        </div>
+      </header>
 
       <div className="detail-grid">
         <div>
@@ -60,8 +63,8 @@ function Quality({ e }: { e: Engine }) {
       <h2 className="t-h2" style={{ marginBottom: 12 }}>{t("detail.quality")}</h2>
       {L.human_eval_line && (
         <>
-          <p style={{ margin: "0 0 2px", fontSize: 15 }}>“{L.human_eval_line}”</p>
-          <p className="t-caption muted" style={{ margin: "0 0 16px" }}>{L.human_eval_by}</p>
+          <p className="quote">“{L.human_eval_line}”</p>
+          <p className="t-caption muted" style={{ margin: "6px 0 16px 16px" }}>{L.human_eval_by}</p>
         </>
       )}
       {(m.cer_ko != null || m.hallu) && (
@@ -98,8 +101,10 @@ function Abilities({ e }: { e: Engine }) {
       <p style={{ margin: "0 0 12px" }}>{t("detail.voicesBody", { n: e.voices?.length ?? 0, f, m })}</p>
       {good && good.length > 0 && (
         <>
-          <div className="t-label" style={{ marginBottom: 6 }}>{t("detail.goodFor")}</div>
-          <p style={{ margin: 0 }}>{good.join(" · ")}</p>
+          <div className="t-label muted" style={{ marginBottom: 8 }}>{t("detail.goodFor")}</div>
+          <div className="row row-wrap" style={{ gap: 6 }}>
+            {good.map((g) => <span key={g} className="badge badge-accent">{g}</span>)}
+          </div>
         </>
       )}
     </section>

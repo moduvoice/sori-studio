@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 export type Route =
   | { name: "wizard" }
+  | { name: "home" }
   | { name: "models" }
   | { name: "model"; id: string }
   | { name: "installed"; tab: "engines" | "disk"; id?: string }
@@ -14,6 +15,8 @@ export function parse(hash: string): Route {
   switch (parts[0]) {
     case "wizard":
       return { name: "wizard" };
+    case "home":
+      return { name: "home" };
     case "models":
       return parts[1] ? { name: "model", id: parts[1] } : { name: "models" };
     case "installed":
@@ -31,6 +34,8 @@ export function href(r: Route): string {
   switch (r.name) {
     case "wizard":
       return "#/wizard";
+    case "home":
+      return "#/home";
     case "models":
       return "#/models";
     case "model":

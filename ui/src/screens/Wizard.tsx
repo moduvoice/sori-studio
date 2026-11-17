@@ -1,7 +1,7 @@
 // A3 첫 실행 마법사 - 3단계: 고르기 → 받기 → 들어 보기(UX 리뷰 2026-11-17: 6단계를 줄임).
 // PC 점검은 화면 없이 뒤에서 하고, 설치할 곳은 받기 화면의 "바꾸기"로만 보여요.
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import { Check, Cpu, HardDrive, Megaphone, Theater } from "lucide-react";
+import { Check, Feather, HardDrive, Mic, Theater } from "lucide-react";
 import { api, errorText, type Drive, type Hardware, type Recommend } from "../lib/api";
 import { bytes } from "../lib/format";
 import { t, tl } from "../lib/i18n";
@@ -10,13 +10,14 @@ import { useHub } from "../lib/store";
 import { Badge, Banner, Button } from "../components/ui";
 import { LicenseBadge, VerdictStatus, loc } from "../components/engine";
 import { InstallPanel, SelftestLines } from "../components/install";
+import { Curves, GIcon, type Hue } from "../components/art";
 import { Logo } from "../components/shell";
 
 type Use = "narration" | "acting" | "light";
-const USES: { key: Use; icon: ReactNode }[] = [
-  { key: "narration", icon: <Megaphone size={28} /> },
-  { key: "acting", icon: <Theater size={28} /> },
-  { key: "light", icon: <Cpu size={28} /> },
+const USES: { key: Use; icon: ReactNode; hue: Hue }[] = [
+  { key: "narration", icon: <Mic size={22} />, hue: "violet" },
+  { key: "acting", icon: <Theater size={22} />, hue: "pink" },
+  { key: "light", icon: <Feather size={22} />, hue: "blue" },
 ];
 
 export default function Wizard() {
@@ -63,11 +64,17 @@ export default function Wizard() {
   const steps = tl("wizard.steps");
   const busyInstall = chosen?.install.status === "installing";
   return (
-    <div className="wizard">
+    <div className="wizard glow">
+      <Curves />
       <header className="wizard-head">
-        <div className="row t-label" style={{ fontSize: 15 }}>
-          <Logo /> {t("app.name")}
+        <div className="brand">
+          <Logo size={22} /> {t("app.name")}
         </div>
+      </header>
+
+      <div className="wizard-body">
+        <div className="wizard-card">
+        <div className="wizard-scroll">
         <ol className="stepper" aria-label={t("wizard.stepsLabel")}>
           {steps.map((name, i) => (
             <li key={name} className={i === step ? "now" : i < step ? "done" : ""} aria-current={i === step ? "step" : undefined}>
@@ -85,10 +92,6 @@ export default function Wizard() {
             </li>
           ))}
         </ol>
-      </header>
-
-      <div className="wizard-body">
-        <div className="wizard-grid" style={{ gridTemplateColumns: "minmax(0, 720px)" }}>
           <div className="col" style={{ gap: 20 }}>
             {step === 0 && <Pick hw={hw} use={use} rec={rec} pick={pick} setPick={setPick} chooseUse={chooseUse} />}
             {step === 1 && chosen && (
@@ -101,16 +104,11 @@ export default function Wizard() {
             {step === 2 && chosen && (
               <>
                 <h1 className="t-display">{t("wizard.s3Title")}</h1>
-                <section className="card card-pad">{installed ? <SelftestLines e={chosen} /> : <p className="muted">{t("wizard.s3Wait")}</p>}</section>
-                <div className="row" style={{ marginTop: 4 }}>
-                  <Button variant="primary" size="lg" disabled={!installed} onClick={() => finish("try")}>{t("wizard.startMaking")}</Button>
-                  <Button size="lg" variant="ghost" onClick={() => finish("models")}>{t("wizard.seeModels")}</Button>
-                </div>
+                <section className="card card-pad">{installed ? <SelftestLines e={chosen} /> : <p className="muted" style={{ margin: 0 }}>{t("wizard.s3Wait")}</p>}</section>
               </>
             )}
           </div>
         </div>
-      </div>
 
       <footer className="wizard-foot">
         <span className="grow">
@@ -120,7 +118,15 @@ export default function Wizard() {
         {step === 0 && (
           <Button variant="primary" size="lg" disabled={!pick} onClick={() => setStep(installed ? 2 : 1)}>{t("common.next")}</Button>
         )}
+        {step === 2 && chosen && (
+          <>
+            <Button size="lg" variant="ghost" onClick={() => finish("models")}>{t("wizard.seeModels")}</Button>
+            <Button variant="primary" size="lg" disabled={!installed} onClick={() => finish("try")}>{t("wizard.startMaking")}</Button>
+          </>
+        )}
       </footer>
+        </div>
+      </div>
     </div>
   );
 }
@@ -143,7 +149,8 @@ function Pick({ hw, use, rec, pick, setPick, chooseUse }: {
       <div className="choices" role="radiogroup" aria-label={t("wizard.s1Title")}>
         {USES.map((u) => (
           <button key={u.key} type="button" role="radio" className="choice" aria-checked={use === u.key} onClick={() => chooseUse(u.key)}>
-            {u.icon}
+            <GIcon hue={u.hue} size="lg">{u.icon}</GIcon>
+            <span className="tick" aria-hidden><Check size={12} strokeWidth={3} /></span>
             <span>{t(`wizard.uses.${u.key}`)}</span>
             <span className="sub">{t(`wizard.usesSub.${u.key}`)}</span>
           </button>
@@ -164,7 +171,8 @@ function Pick({ hw, use, rec, pick, setPick, chooseUse }: {
                   {loc(e).human_eval_line && <span className="t-body">“{loc(e).human_eval_line}”</span>}
                   <span className="row row-wrap" style={{ gap: 6 }}><LicenseBadge e={e} /></span>
                 </span>
-                <span className="col" style={{ alignItems: "flex-end", gap: 2 }}>
+                <span className="tick" aria-hidden><Check size={12} strokeWidth={3} /></span>
+                <span className="col dl" style={{ alignItems: "flex-end", gap: 2, flex: "none" }}>
                   <span className="t-caption muted">{t("install.plan.download")}</span>
                   <span className="t-h2 num">{bytes(e.download_bytes)}</span>
                 </span>

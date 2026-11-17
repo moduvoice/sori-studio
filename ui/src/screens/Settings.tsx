@@ -1,6 +1,6 @@
 // G1 설정 - 바꾸면 바로 적용(저장 단추 없음), 되돌릴 수 없는 일만 확인 창
-import { useEffect, useState } from "react";
-import { Eye, EyeOff, RefreshCw } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Eye, EyeOff, FolderOpen, Info, PlugZap, RefreshCw, ShieldCheck, SlidersHorizontal } from "lucide-react";
 import { api, errorText, openExternal, type ApiInfo } from "../lib/api";
 import { clock, date } from "../lib/format";
 import { t } from "../lib/i18n";
@@ -9,29 +9,38 @@ import { useHub, useToast } from "../lib/store";
 import { Button, CopyButton, Dialog, IconButton, Segmented, Switch } from "../components/ui";
 
 const SECTIONS = ["general", "models", "network", "api", "about"];
+const ICONS: Record<string, ReactNode> = {
+  general: <SlidersHorizontal size={16} />,
+  models: <FolderOpen size={16} />,
+  network: <ShieldCheck size={16} />,
+  api: <PlugZap size={16} />,
+  about: <Info size={16} />,
+};
 const REPO = "https://github.com/moduvoice/sori-studio";
 
 export default function Settings({ section }: { section: string }) {
   const s = SECTIONS.includes(section) ? section : "general";
   return (
-    <div className="page" style={{ maxWidth: 1000 }}>
-      <h1 className="t-h1" style={{ marginBottom: 20 }}>{t("settings.title")}</h1>
-      <div className="settings-grid">
-        <nav className="settings-nav" aria-label={t("settings.title")}>
-          {SECTIONS.map((x) => (
-            <a key={x} className="nav-item" href={href({ name: "settings", section: x })} aria-current={x === s ? "page" : undefined}>
-              <span className="label" style={{ display: "inline" }}>{t(`settings.${x}`)}</span>
-            </a>
-          ))}
-        </nav>
-        <section className="card card-pad" aria-label={t(`settings.${s}`)}>
-          <h2 className="t-h2" style={{ marginBottom: 8 }}>{t(`settings.${s}`)}</h2>
-          {s === "general" && <General />}
-          {s === "models" && <Models />}
-          {s === "api" && <Api />}
-          {s === "network" && <Network />}
-          {s === "about" && <About />}
-        </section>
+    <div className="split">
+      <nav className="side" aria-label={t("settings.title")}>
+        {SECTIONS.map((x) => (
+          <a key={x} className="side-item" href={href({ name: "settings", section: x })} aria-current={x === s ? "page" : undefined}>
+            {ICONS[x]}
+            <span className="ellipsis">{t(`settings.${x}`)}</span>
+          </a>
+        ))}
+      </nav>
+      <div className="split-body">
+        <div className="inner">
+          <h1 className="t-h1" style={{ marginBottom: 16 }}>{t(`settings.${s}`)}</h1>
+          <section className="card card-pad" aria-label={t(`settings.${s}`)}>
+            {s === "general" && <General />}
+            {s === "models" && <Models />}
+            {s === "api" && <Api />}
+            {s === "network" && <Network />}
+            {s === "about" && <About />}
+          </section>
+        </div>
       </div>
     </div>
   );
@@ -172,7 +181,7 @@ function Api() {
         <table className="table" style={{ fontSize: 13 }}>
           <tbody>
             {info.calls.slice(0, 20).map((c, i) => (
-              <tr key={i} style={{ cursor: "default" }}>
+              <tr key={i}>
                 <td className="t-mono muted" style={{ height: 32 }}>{clock(c.at)}</td>
                 <td className="t-mono">{c.method} {c.path}</td>
                 <td style={{ color: c.status < 400 ? "var(--success)" : "var(--danger)" }} className="num">{c.status}</td>

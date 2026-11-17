@@ -6,7 +6,15 @@
 
 **A free Korean text-to-speech hub that runs on your own PC.** Pick open-source TTS models we tested in Korean, download them from their official sources, and run them from one simple app and one local API. Everything is free to use.
 
-> **Preview.** The app, the desktop shell and 8 engines work, but there is no signed installer (.exe) and no script studio yet. For now, try it with "Run the development version" below.
+## Download (Windows 10/11 x64)
+
+**[Download Sori-Studio-Setup-0.1.0.exe](https://github.com/moduvoice/sori-studio/releases/latest)** - installs into your user folder, no administrator rights needed.
+
+1. Windows may show a blue "Windows protected your PC" window because the installer isn't code-signed yet. Click **[More info] → [Run anyway]**.
+2. The first launch prepares the app once (downloads Python), about 1-2 minutes; internet needed.
+3. The first-run guide recommends models for your PC: download → listen → make speech.
+
+> This is the first public version (0.1.0). Studio features such as multi-line scripts and voice cloning come in a later version.
 
 - No account, no keys, no subscription. No telemetry.
 - Model weights are not included in this repository or the app. They are downloaded from their **official source** (Hugging Face and others) when you choose them, after you see a summary and the full text of their license.
@@ -17,11 +25,13 @@
 
 ## Screens
 
+![Home](docs/images/home.png)
+
 | Choose | Make speech (English UI) |
 |---|---|
 | ![Wizard](docs/images/wizard.png) | ![Make speech](docs/images/make-en.png) |
 
-A 1-minute video from first launch to hearing speech: [docs/images/demo.mp4](docs/images/demo.mp4) - recorded on a clean Windows PC downloading Supertonic-3 (521 MB); the 19-second download is sped up. The Korean narration was also made with this app (Qwen3-TTS, voice Sohee).
+A 1-minute video from installing and first launch to hearing speech: [docs/images/demo.mp4](docs/images/demo.mp4) - recorded on a clean Windows PC downloading Supertonic-3 (521 MB); the 23-second download is sped up. The Korean narration was also made with this app (Qwen3-TTS, voice Sohee).
 
 ## Engines
 
@@ -49,7 +59,7 @@ Only models that run on a **32 GB GPU (RTX 5090 / RTX PRO 4500 class)** are list
 | NVIDIA 12-24 GB | The above + VoxCPM2 on GPU. WSL2 engines show "Not checked yet" (only checked on 32 GB) |
 | NVIDIA 32 GB | All 8 |
 
-## Run the development version
+## Run the development version (from source)
 
 You need Windows 10/11 x64 or Linux x64 (macOS not checked yet), [uv](https://docs.astral.sh/uv/) and Node.js 22 LTS.
 

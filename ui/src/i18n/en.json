@@ -7,7 +7,33 @@
     "installed": "My models",
     "try": "Make speech",
     "settings": "Settings",
-    "label": "Screens"
+    "label": "Screens",
+    "home": "Home"
+  },
+  "home": {
+    "tagline": "Free Korean text-to-speech that runs on your own PC",
+    "cards": {
+      "try": {
+        "title": "Make speech",
+        "body": "Type some text, pick a voice and turn it into speech."
+      },
+      "models": {
+        "title": "Find models",
+        "body": "Pick and download open-source models we tested in Korean."
+      },
+      "installed": {
+        "title": "My models",
+        "body": "See what you've downloaded and remove what you don't use."
+      }
+    },
+    "myModels": "Downloaded models",
+    "all": "See all",
+    "voices": {
+      "one": "{n} voice",
+      "other": "{n} voices"
+    },
+    "recent": "Just made",
+    "recentEmpty": "Audio you make will show up here."
   },
   "status": {
     "label": "Status",
@@ -185,7 +211,8 @@
     "clearFilters": "Clear filters",
     "download": "Download",
     "resume": "Resume",
-    "failedCard": "Download stopped"
+    "failedCard": "Download stopped",
+    "more": "Show review and terms"
   },
   "detail": {
     "quality": "Korean quality",
@@ -248,6 +275,15 @@
       "slow": "Slower",
       "normal": "Normal",
       "fast": "Faster"
+    },
+    "resultEmpty": "Your audio will appear here.",
+    "chars": {
+      "one": "{n} character",
+      "other": "{n} characters"
+    },
+    "gender": {
+      "f": "Female",
+      "m": "Male"
     }
   },
   "settings": {

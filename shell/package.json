@@ -6,9 +6,62 @@
   "license": "Apache-2.0",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "python ../etc/build_installer.py"
   },
   "devDependencies": {
-    "electron": "^45.3.3"
+    "electron": "^45.3.3",
+    "electron-builder": "^26.18.0"
+  },
+  "author": {
+    "name": "ModuVoice",
+    "url": "https://github.com/moduvoice/sori-studio"
+  },
+  "homepage": "https://github.com/moduvoice/sori-studio",
+  "build": {
+    "appId": "com.moduvoice.soristudio",
+    "productName": "Sori Studio",
+    "copyright": "Copyright 2026 세종소프트 유한회사",
+    "asar": false,
+    "files": [
+      "main.js",
+      "preload.js",
+      "startup.html",
+      "icon.png",
+      "wsl-install.ps1",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build/app-root",
+        "to": "app-root"
+      }
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build-res"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.png",
+      "artifactName": "Sori-Studio-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Sori Studio",
+      "license": "../LICENSE",
+      "deleteAppDataOnUninstall": false
+    }
   }
 }

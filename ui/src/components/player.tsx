@@ -1,12 +1,13 @@
 // 소리 듣기 + 파형(components.md 9). 한 번에 하나만 재생해요. 사용자가 누를 때만 소리가 나요.
-import { useEffect, useMemo, useRef, useState } from "react";
+// 재생한 부분은 보라→분홍 그라데이션(rebuild-2026-11.md 1절) - 막대마다 --p(0~1)로 색을 섞어요.
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { Pause, Play } from "lucide-react";
 import { getToken } from "../lib/api";
 import { t } from "../lib/i18n";
 
 let current: HTMLAudioElement | null = null;
 
-async function peaksOf(blob: Blob, n: number): Promise<number[]> {
+async function peaksOf(blob: Blob, n: number): Promise<{ peaks: number[]; dur: number }> {
   try {
     const ctx = new AudioContext();
     const buf = await ctx.decodeAudioData(await blob.arrayBuffer());
@@ -20,16 +21,19 @@ async function peaksOf(blob: Blob, n: number): Promise<number[]> {
       out.push(m);
     }
     const max = Math.max(...out, 0.01);
-    return out.map((v) => Math.max(0.06, v / max));
+    return { peaks: out.map((v) => Math.max(0.06, v / max)), dur: buf.duration };
   } catch {
-    return Array(n).fill(0.1);
+    return { peaks: Array(n).fill(0.1), dur: 0 };
   }
 }
+
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /** src 가 Blob 이면 그대로, 문자열이면 토큰을 붙여 받아요(허브 주소). */
 export function Player({ src, size = "md", label, bars = 72, onReady }: { src: Blob | string | null; size?: "sm" | "md" | "lg"; label: string; bars?: number; onReady?: (b: Blob) => void }) {
   const [blob, setBlob] = useState<Blob | null>(null);
   const [peaks, setPeaks] = useState<number[] | null>(null);
+  const [dur, setDur] = useState(0);
   const [playing, setPlaying] = useState(false);
   const [pos, setPos] = useState(0);
   const audio = useRef<HTMLAudioElement | null>(null);
@@ -47,7 +51,10 @@ export function Player({ src, size = "md", label, bars = 72, onReady }: { src: B
       if (!b || dead) return;
       setBlob(b);
       onReady?.(b);
-      setPeaks(await peaksOf(b, bars));
+      const p = await peaksOf(b, bars);
+      if (dead) return;
+      setPeaks(p.peaks);
+      setDur(p.dur);
     })();
     return () => {
       dead = true;
@@ -86,6 +93,7 @@ export function Player({ src, size = "md", label, bars = 72, onReady }: { src: B
   }, [url]);
 
   const n = peaks?.length ?? bars;
+  const icon = size === "lg" ? 20 : size === "sm" ? 13 : 16;
   return (
     <div className="player">
       <button
@@ -95,7 +103,7 @@ export function Player({ src, size = "md", label, bars = 72, onReady }: { src: B
         disabled={!url}
         onClick={() => toggle()}
       >
-        {!url && src ? <span className="spinner" /> : playing ? <Pause size={16} /> : <Play size={16} style={{ marginLeft: 2 }} />}
+        {!url && src ? <span className="spinner" /> : playing ? <Pause size={icon} fill="currentColor" /> : <Play size={icon} fill="currentColor" style={{ marginLeft: 2 }} />}
       </button>
       <div
         className={`wave ${size}`}
@@ -106,9 +114,18 @@ export function Player({ src, size = "md", label, bars = 72, onReady }: { src: B
         }}
       >
         {Array.from({ length: n }, (_, i) => (
-          <i key={i} className={i / n < pos ? "on" : ""} style={{ height: `${Math.round((peaks?.[i] ?? 0.08) * 100)}%`, opacity: peaks ? 1 : 0.5 }} />
+          <i
+            key={i}
+            className={i / n < pos ? "on" : ""}
+            style={{ height: `${Math.round((peaks?.[i] ?? 0.08) * 100)}%`, opacity: peaks ? 1 : 0.5, "--p": (i / n).toFixed(3) } as CSSProperties}
+          />
         ))}
       </div>
+      {size !== "sm" && dur > 0 && (
+        <span className="player-time">
+          {mmss(pos * dur)} / {mmss(dur)}
+        </span>
+      )}
     </div>
   );
 }

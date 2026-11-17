@@ -7,7 +7,32 @@
     "installed": "내 모델",
     "try": "소리 만들기",
     "settings": "설정",
-    "label": "화면"
+    "label": "화면",
+    "home": "홈"
+  },
+  "home": {
+    "tagline": "내 PC 에서 돌리는 무료 한국어 TTS",
+    "cards": {
+      "try": {
+        "title": "소리 만들기",
+        "body": "글을 넣고 목소리를 골라 바로 소리로 만들어요."
+      },
+      "models": {
+        "title": "모델 찾기",
+        "body": "한국어로 직접 시험한 오픈소스 모델을 골라 받아요."
+      },
+      "installed": {
+        "title": "내 모델",
+        "body": "받은 모델을 보고, 안 쓰는 모델은 지워요."
+      }
+    },
+    "myModels": "받은 모델",
+    "all": "모두 보기",
+    "voices": {
+      "other": "목소리 {n}개"
+    },
+    "recent": "방금 만든 소리",
+    "recentEmpty": "소리를 만들면 여기에 나와요."
   },
   "status": {
     "label": "상태",
@@ -184,7 +209,8 @@
     "clearFilters": "거르기 풀기",
     "download": "받기",
     "resume": "이어서 받기",
-    "failedCard": "받다가 멈췄어요"
+    "failedCard": "받다가 멈췄어요",
+    "more": "평·사용 조건 보기"
   },
   "detail": {
     "quality": "한국어 품질",
@@ -246,6 +272,14 @@
       "slow": "느리게",
       "normal": "보통",
       "fast": "빠르게"
+    },
+    "resultEmpty": "만든 소리가 여기에 나와요.",
+    "chars": {
+      "other": "{n}자"
+    },
+    "gender": {
+      "f": "여성",
+      "m": "남성"
     }
   },
   "settings": {

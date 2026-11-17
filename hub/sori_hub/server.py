@@ -23,7 +23,7 @@ from . import __version__, catalog, hardware, installer, longtext, paths, qualit
 from .engines import EngineError, Manager
 
 DEFAULT_PORT = 5150
-SETTINGS_DEFAULTS = {"theme": "system", "font_scale": 100, "wizard_done": False, "api_enabled": False, "language": "system"}
+SETTINGS_DEFAULTS = {"theme": "dark", "font_scale": 100, "wizard_done": False, "api_enabled": False, "language": "system"}
 SETTINGS_KEYS = {"theme": ("system", "light", "dark"), "font_scale": range(90, 131), "wizard_done": (True, False),
                  "api_enabled": (True, False), "last_screen": None, "language": ("system", "ko", "en")}
 
