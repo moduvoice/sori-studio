@@ -41,7 +41,7 @@
 - 엔진 8개: Windows 에서 바로 - Supertonic-3·Kitten TTS 2 mini(CPU), Qwen3-TTS·VoxCPM2(GPU, torch 2.14.1+cu130 / CPU 판). 리눅스 전용(Windows 는 WSL2) - Confucius4·CosyVoice3·dots.tts·ZONOS3-Mini(GPU, SGLang-Omni 공용 런타임 커밋 고정·해시 잠금).
 - WSL2: 감지·[WSL2 켜기](기능 켜기 + 공식 MSI 대체 경로)·전용 배포판 `SoriStudio`(Ubuntu 24.04 판 고정·해시)·필요한 엔진만 CUDA 툴킷.
 - 요청 품질: 긴 글 문장 나눠 이어 붙이기, 길이 검사로 환각 의심 시 씨앗을 바꿔 다시 만들기, 엔진마다 한 번에 한 요청(줄 세우기), 설치 [멈춤]이 패키지 단계에서도 들음.
-- 시험은 모두 스팟에서 - 결과·찾아 고친 것은 `docs/spot-results.md`. Fish Drama-3 은 32GB 에서 켜지지 않아 뺐어요(`archive/engines/`).
+- 시험은 모두 깨끗한 클라우드 GPU 기계에서 했어요(확인 범위는 README 의 '엔진' 표). Fish Drama-3 은 32GB 에서 켜지지 않아 뺐어요(`archive/engines/`).
 
 ## 남은 것(1단계에서 미룬 것)
 - 자가 시험 실측(RTF·메모리)을 판정·생성 시간 한도에 다시 쓰기.
